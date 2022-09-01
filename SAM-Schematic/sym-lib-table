@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "ECEN4024SAM")(type "KiCad")(uri "${KIPRJMOD}/ECEN4024SAM.kicad_sym")(options "")(descr ""))
+)
