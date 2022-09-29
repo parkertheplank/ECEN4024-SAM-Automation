@@ -10,8 +10,8 @@
 #define waterValve1 23
 #define waterValve2 24
 
-#define airValve 25
-#define airBleed 26
+#define airValve 26
+#define airBleed 25
 #define airPump 5
 #define airLever 6
 
@@ -26,15 +26,19 @@
 #define sda 20
 #define scl 21
 
+const int on=LOW;
+const int off=HIGH;
+
 //Constructors
 const int numReadings = 10;
+const int inputPin = A12;
 
 int readings[numReadings];
 int readIndex = 0;
 int total = 0;
 int average = 0;
+float vref = 4.86;
 
-int inputPin = A0;
 /*
 Adafruit_ADS1115 ads1115;  // Construct an ads1115 
 int16_t adcVal;
@@ -46,7 +50,7 @@ float psi;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("start");
+  Serial.println("\nfart");
   
   pinMode(13, OUTPUT); //turns LED on
   pneumSetup();
@@ -55,12 +59,10 @@ void setup() {
 
 //----------CONTROL FLOW FUNCTIONS------------------------
 void loop() {
+
   // put your main code here, to run repeatedly:
-  //feedbackLoop(14.5);
-  airRead();
-  Serial.println(average);
-  Serial.println(psi);
-  delay(100);
+  delay(5000);
+  feedbackLoop(14.5);
 }
 
 

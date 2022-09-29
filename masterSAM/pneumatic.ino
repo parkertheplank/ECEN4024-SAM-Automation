@@ -9,26 +9,30 @@ void pneumSetup(){
    pinMode(airBleed, OUTPUT);
    pinMode(airValve, OUTPUT);
    
-   digitalWrite(airBleed, LOW); 
-   digitalWrite(airValve, HIGH);
-   digitalWrite(airPump, HIGH); 
-   
+   digitalWrite(airBleed, off); //bleeding on. 
+   digitalWrite(airValve, off); //valve closed. solenoid without power closed relay inv
+   digitalWrite(airPump, off); //pump off
+
+   airRead();
 }
 
-void feedbackLoop( float targetpsi){
-  //inititalize air readings
-  airRead();
-
-  //start air pump
-  digitalWrite(airPump,HIGH);
-
+void feedbackLoop(float targetpsi){
+  Serial.println("\nfeedback start");
+  //inititalize relays
+  digitalWrite(airBleed, on); //close bleeder
+  digitalWrite(airValve, on); //valve open
+  digitalWrite(airPump, on); //start pump
+  
+  Serial.println("power on");
   //read pressure
   while (psi < targetpsi){
     airRead();
+    delay(100);
   }
-
-  //stop pump
-  digitalWrite(airPump,LOW);
+  
+  Serial.println("power off");
+  digitalWrite(airValve, off); //close valve
+  digitalWrite(airPump, off); //stop pump
   
   //bleed back
   bleed(targetpsi);
@@ -55,17 +59,27 @@ void airRead()//Read the pressure sensor analog output to match 14.5 psi.
 
   average = total/numReadings;
   
-  float realValue = (((average / 1024.0)* 5.09) + 0.01);
+  float realValue = (((average / 1024.0)* vref) + 0.01);
   psi = ((realValue - 0.99595617)/0.066932271);
+  
+  Serial.print("adcval:  ");
+  Serial.print(average);
+  Serial.print("\tpsi:   ");
+  Serial.println(psi);
+
 }
 
 void bleed(float targetpsi)//Decrease air pressure to desired value
 {
-  while (psi < targetpsi){
+  Serial.println("\nbleeding");
+  digitalWrite(airBleed,off); //bleed air
+  
+  while (psi > targetpsi){
+    Serial.print("\n\n");
     airRead();
-    digitalWrite(airBleed,HIGH); //bleed air
+    delay(100);
   }
-  digitalWrite(airBleed,LOW);
+  digitalWrite(airBleed,on); //close bleeder
 } 
 /*
 void airPressurize(){} //Turn on air pump and two-way air valve to begin pressurizing the SAM.
