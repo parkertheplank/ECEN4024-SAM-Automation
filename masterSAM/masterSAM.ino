@@ -10,9 +10,8 @@
 #define waterValve1 23
 #define waterValve2 24
 
-#define airValve1 25
+#define airValve 25
 #define airBleed 26
-#define airTrans 4
 #define airPump 5
 #define airLever 6
 
@@ -28,17 +27,27 @@
 #define scl 21
 
 //Constructors
+const int numReadings = 10;
+
+int readings[numReadings];
+int readIndex = 0;
+int total = 0;
+int average = 0;
+
+int inputPin = A0;
+/*
 Adafruit_ADS1115 ads1115;  // Construct an ads1115 
 int16_t adcVal;
 int16_t adcRef;
 float adcVolt;
 float vRef;
+*/
 float psi;
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("start");
+  
   pinMode(13, OUTPUT); //turns LED on
   pneumSetup();
 }
@@ -49,17 +58,12 @@ void loop() {
   // put your main code here, to run repeatedly:
   //feedbackLoop(14.5);
   airRead();
-  Serial.print("adcVal:");
-  Serial.print(adcVal);
-  Serial.print(" adcVolt:");
-  Serial.print(adcVolt);
-  Serial.print(" vRef:");
-  Serial.print(vRef);
-  Serial.print(" psi:");
-  Serial.print(psi);
-  Serial.println();
-  delay(200);
+  Serial.println(average);
+  Serial.println(psi);
+  delay(100);
 }
+
+
 /*void main(){}
 void airMaster() {}
 
