@@ -1,60 +1,57 @@
 void pneumSetup(){
-   pinMode(13, OUTPUT);
-   pinMode(3, OUTPUT);
-   pinMode(5, OUTPUT);
-   pinMode(airPump,OUTPUT);
-   pinMode(airBleed,OUTPUT);
-   airBleed = HIGH;
+   ads1115.begin();  // Initialize ads1015 at the default address 0x48
+   
+   pinMode(airPump, OUTPUT);
+   pinMode(airBleed, OUTPUT);
+   
+   digitalWrite(airBleed, LOW);
+   digitalWrite(airPump, HIGH);
    
 }
 
-void feedbackLoop( double targetPsi){
+void feedbackLoop( float targetpsi){
   //inititalize air readings
-  float psi1 = airRead();
-  float psi2 = airRead();
-  float psi3 = airRead();
-  float avgPsi = (psi1+psi2+psi3)/3;
+  airRead();
 
   //start air pump
-  airPump = HIGH;
+  digitalWrite(airPump,HIGH);
 
   //read pressure
-  while (avgPsi < targetPsi){
-    //create running average of last 3 values
-    psi1 = psi2;
-    psi2 = psi3;
-    psi3 = airRead();
-    avgPsi = (psi1+psi2+psi3)/3;
+  while (psi < targetpsi){
+    airRead();
   }
 
   //stop pump
-  airPump = LOW;
+  digitalWrite(airPump,LOW);
   
   //bleed back
-  airBleed(targetPsi);
+  bleed(targetpsi);
 }
 
-float airRead()//Read the pressure sensor analog output to match 14.5 psi. 
+void airRead()//Read the pressure sensor analog output to match 14.5 psi. 
 {
-  float value = (float)analogRead(A1);
-  float realValue = (((value / 1024.0)* 5.09) + 0.01);
-  float psi = ((realValue - 0.99595617)/0.066932271);
-  return psi;
+  Serial.print("hi");
+  adcRef = ads1115.readADC_SingleEnded(2); //wire voltage reference channel 0
+  Serial.print("hi2");
+  vRef = ads1115.computeVolts(adcRef);
+  Serial.print("hi3");
+  adcVal = ads1115.readADC_SingleEnded(3);
+  adcVolt = ads1115.computeVolts(adcVal);
+  
+  psi = 60.000*((adcVolt-.98)/(vRef-.98));
 }
 
-void airBleed( double targetPsi, float psi1, float psi2, float psi3, float avgPsi)//Decrease air pressure to desired value
+void bleed(float targetpsi)//Decrease air pressure to desired value
 {
+  airRead();
   //read pressure
-  while (avgPsi < targetPsi){
+  while (psi < targetpsi){
     //create running average of last 3 values
-    psi1 = psi2;
-    psi2 = psi3;
-    psi3 = airRead();
-    avgPsi = (psi1+psi2+psi3)/3;
+    airRead();
     //bleed some
-    airBleed = LOW;
+    digitalWrite(airBleed,LOW);
     delay(10);
-    airBleed = HIGH;
+    digitalWrite(airBleed,HIGH);
   }
 } 
 /*

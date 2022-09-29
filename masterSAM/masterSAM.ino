@@ -1,24 +1,45 @@
+//-----------------INFO-------------------------------
+//Mega 2560 6 external interrupts, which are 0-5 on pins 2, 3, 21, 20, 19, 18
+
 //-----------------SETUP-------------------------------
+#include <Wire.h>
+#include <Adafruit_ADS1X15.h>
+
 //Relay Pins
-#define waterPump 1
-#define waterValve1 2
-#define waterValve2 2
-#define airValve1 2
-#define airBleed 2
-#define airTrans 2
-#define airPump 2
-#define airLever 2
-#define vibrator 3
+#define waterPump 22
+#define waterValve1 23
+#define waterValve2 24
+
+#define airValve1 25
+#define airBleed 26
+#define airTrans 4
+#define airPump 5
+#define airLever 6
+
+#define vibrator 7
 
 //Input and UI Pins
-#define airTransIn 2
 #define startButton 3
-#define vibButton 5
-#define lcd 4
+#define vibButton 49
+#define lcd 48
+
+//Comm pins
+#define sda 20
+#define scl 21
+
+//Constructors
+Adafruit_ADS1115 ads1115;  // Construct an ads1115 
+int16_t adcVal;
+int16_t adcRef;
+float adcVolt;
+float vRef;
+float psi;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  Serial.println("start");
+  pinMode(13, OUTPUT); //turns LED on
   pneumSetup();
 }
 
@@ -26,7 +47,18 @@ void setup() {
 //----------CONTROL FLOW FUNCTIONS------------------------
 void loop() {
   // put your main code here, to run repeatedly:
-  feedbackLoop(14.5);
+  //feedbackLoop(14.5);
+  airRead();
+  Serial.print("adcVal:");
+  Serial.print(adcVal);
+  Serial.print(" adcVolt:");
+  Serial.print(adcVolt);
+  Serial.print(" vRef:");
+  Serial.print(vRef);
+  Serial.print(" psi:");
+  Serial.print(psi);
+  Serial.println();
+  delay(200);
 }
 /*void main(){}
 void airMaster() {}
