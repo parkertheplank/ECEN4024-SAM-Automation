@@ -17,25 +17,24 @@ void pneumSetup(){
 }
 
 void feedbackLoop(float targetpsi){
-  Serial.println("\nfeedback start");
-  //inititalize relays
-  digitalWrite(airBleed, on); //close bleeder
-  digitalWrite(airValve, on); //valve open
-  digitalWrite(airPump, on); //start pump
   
-  Serial.println("power on");
+  Serial.println("\npressurize");
+  airPressurize();
+  
   //read pressure
-  while (psi < targetpsi){
+  while (psi < (targetpsi - .5)){
     airRead();
-    delay(100);
   }
   
-  Serial.println("power off");
-  digitalWrite(airValve, off); //close valve
-  digitalWrite(airPump, off); //stop pump
+  Serial.println("off");
+  airHalt();
   
   //bleed back
+  delay(2000);
+  Serial.println("\nbleeding");
   bleed(targetpsi);
+  delay(2000);
+  airRead();
 }
 
 void airRead()//Read the pressure sensor analog output to match 14.5 psi. 
@@ -50,6 +49,7 @@ void airRead()//Read the pressure sensor analog output to match 14.5 psi.
   */
   total = total - readings[readIndex];
   readings[readIndex] = analogRead(inputPin);
+  float realValue = (((readings[readIndex] / 1024.0)* vref) + 0.01);
   total = total + readings[readIndex];
   readIndex = readIndex + 1;
 
@@ -59,10 +59,10 @@ void airRead()//Read the pressure sensor analog output to match 14.5 psi.
 
   average = total/numReadings;
   
-  float realValue = (((average / 1024.0)* vref) + 0.01);
+  
   psi = ((realValue - 0.99595617)/0.066932271);
   
-  Serial.print("adcval:  ");
+  Serial.print("   adcval:  ");
   Serial.print(average);
   Serial.print("\tpsi:   ");
   Serial.println(psi);
@@ -71,17 +71,32 @@ void airRead()//Read the pressure sensor analog output to match 14.5 psi.
 
 void bleed(float targetpsi)//Decrease air pressure to desired value
 {
-  Serial.println("\nbleeding");
+  airRead();
   digitalWrite(airBleed,off); //bleed air
   
-  while (psi > targetpsi){
-    Serial.print("\n\n");
+  while (psi > targetpsi ){
     airRead();
     delay(100);
   }
   digitalWrite(airBleed,on); //close bleeder
 } 
-/*
-void airPressurize(){} //Turn on air pump and two-way air valve to begin pressurizing the SAM.
-void airHalt() {} //raise air pressure to desired value
-void airLever() {} //Push top lever to release pressure into the chamber for 10-20 seconds to allow the pressure to reach equilibrium. */
+
+void airPressurize() //Pressurize Top Chamber
+{
+  digitalWrite(airBleed, on); //close bleeder
+  digitalWrite(airValve, on); //valve open
+  digitalWrite(airPump, on); //start pump
+} 
+
+void airHalt() //Stop Pressurizing and close
+{
+  digitalWrite(airValve, off); //close valve
+  digitalWrite(airPump, off); //stop pump
+}
+
+void airPunch() //reach equib pressure between two chambers
+{
+  digitalWrite(airLever, on);
+  delay(5000);
+  digitalWrite(airLever,off);
+} 
