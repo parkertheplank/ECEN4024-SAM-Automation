@@ -1,2 +1,22 @@
-void waterFill() {} //Turn on water pump and water valves to begin filling the SAM with water for 10 seconds.
-void waterClose(){} //After 10 seconds, shut off water pump and close water valves.
+void waterSetup() 
+{
+  pinMode(waterPump, OUTPUT);
+  pinMode(waterValveIn, OUTPUT);
+  pinMode(waterValveOut, OUTPUT);
+
+  waterClose();
+}
+
+void waterFill() 
+{
+  digitalWrite(waterValveIn, on);
+  digitalWrite(waterValveOut, on);
+  digitalWrite(waterPump, on);
+} 
+
+void waterClose()
+{
+  digitalWrite(waterPump, off);
+  digitalWrite(waterValveIn, off);
+  digitalWrite(waterValveOut, off);
+} 
