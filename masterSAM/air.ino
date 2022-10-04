@@ -1,6 +1,6 @@
 void airSetup()
 {
-   //ads1115.begin();  // Initialize ads1015 at the default address 0x48
+   ads1115.begin();  // Initialize ads1015 at the default address 0x48
    
    pinMode(airPump, OUTPUT);
    pinMode(airBleed, OUTPUT);
@@ -29,20 +29,11 @@ void feedBackLoop(float targetpsi)
 
 void airRead()//Read the pressure sensor analog output to match 14.5 psi. 
 {
-
-  /*
-  adcRef = ads1115.readADC_SingleEnded(2); //wire voltage reference channel 0
-  vRef = ads1115.computeVolts(adcRef);
-  adcVal = ads1115.readADC_SingleEnded(3);
+  adcVal = ads1115.readADC_SingleEnded(1);
   adcVolt = ads1115.computeVolts(adcVal);
-  psi = 60.000*((adcVolt-.98)/(vRef-.98)); 
-  */
-  adcVal = analogRead(inputPin);
-  float realValue = (((adcVal / 1024.0)* vref) + 0.01);
-  psi = ((realValue - 0.99595617)/0.066932271);
+  psi = (60.000*((adcVolt-.98)/(vRef-.98))); 
   
   monPrintData();//testing
-
 }
 
 void bleed(float targetpsi)//Decrease air pressure to desired value

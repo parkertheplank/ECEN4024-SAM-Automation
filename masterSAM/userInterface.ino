@@ -7,7 +7,9 @@ void uiSetup(){
 void monPrintData()
 {
   Serial.print("adcval:  ");
-  Serial.print(adcVal);
+  Serial.print(adcVal,8);
+  Serial.print("   adcVolt:  ");
+  Serial.print(adcVolt,4);
   Serial.print("\tpsi:   ");
   Serial.println(psi);
 }

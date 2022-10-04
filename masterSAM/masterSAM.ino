@@ -30,18 +30,12 @@ const int on=LOW;
 const int off=HIGH;
 
 //Constructors
-const int inputPin = A12;
 int adcVal;
-float vref = 4.86;
-float psi;
-
-/*
-Adafruit_ADS1115 ads1115;  // Construct an ads1115 
-int16_t adcVal;
-int16_t adcRef;
 float adcVolt;
-float vRef;
-*/
+const float vRef = 5.05;
+const float adcOffset = -.28;
+float psi;
+Adafruit_ADS1115 ads1115;  // Construct an ads1115 
 
 void setup() {
   pinMode(13, OUTPUT); //turns LED on
@@ -50,13 +44,16 @@ void setup() {
   waterSetup();
   mechSetup();
   attachInterrupt(digitalPinToInterrupt(startButton), mainSAM, LOW); //triggers whenever pin is low
-  attachInterrupt(digitalPinToInterrupt(vibButton), vibrateOn, FALLING); 
+  //attachInterrupt(digitalPinToInterrupt(vibButton), vibrateOn, FALLING); 
   
   //testing
-  feedBackLoop(14.5);
+  //feedBackLoop(14.5);
 }
 
-void loop() {}
+void loop() 
+{
+  airRead();
+}
 
 void mainSAM(){
   //testing
