@@ -17,6 +17,9 @@
 
 #define vibrator 7
 
+const int on=LOW;
+const int off=HIGH;
+
 //Input and UI Pins
 #define startButton 3
 #define vibButton 49
@@ -25,9 +28,6 @@
 //Comm pins
 #define sda 20
 #define scl 21
-
-const int on=LOW;
-const int off=HIGH;
 
 //Constructors
 const int numReadings = 10;
@@ -53,32 +53,17 @@ void setup() {
   Serial.println("\nfart");
   
   pinMode(13, OUTPUT); //turns LED on
+  //ui_setup();
   pneumSetup();
-  
-  
   delay(5000);
   feedbackLoop(30);
+  
+  
 }
 
 
 //----------CONTROL FLOW FUNCTIONS------------------------
-void loop() {
 
-  // put your main code here, to run repeatedly:
-  
-}
-
-
+void loop() { }
 /*void main(){}
 void airMaster() {}
-
-
-//-------PROCESS COMPONENT FUNCTIONS-----------------------
-void vibrate() {} // to vibrate the SAM.
-void waterFill() {} //Turn on water pump and water valves to begin filling the SAM with water for 10 seconds.
-void tilt() {} // Tilt the SAM to allow the air bubbles to exit.
-void waterClose(){} //After 10 seconds, shut off water pump and close water valves.
-void airUSBwrite() {} //Record the air pressure data.
-*/
-
-//--------DISPLAY FUNCTIONS-------------------------------
