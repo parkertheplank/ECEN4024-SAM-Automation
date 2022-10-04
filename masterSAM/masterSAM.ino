@@ -37,7 +37,7 @@ int readings[numReadings];
 int readIndex = 0;
 int total = 0;
 int average = 0;
-float vref = 4.99;
+float vref = 4.86;
 
 /*
 Adafruit_ADS1115 ads1115;  // Construct an ads1115 
@@ -55,14 +55,27 @@ void setup() {
   pinMode(13, OUTPUT); //turns LED on
   //ui_setup();
   pneumSetup();
+<<<<<<< HEAD
   delay(5000);
   feedbackLoop(30);
   
   
+=======
+>>>>>>> parent of 9fa4d56 (feedback loop)
 }
 
 
 //----------CONTROL FLOW FUNCTIONS------------------------
+<<<<<<< HEAD
+=======
+void loop() {
+
+  // put your main code here, to run repeatedly:
+  delay(5000);
+  feedbackLoop(14.5);
+}
+
+>>>>>>> parent of 9fa4d56 (feedback loop)
 
 void loop() { }
 /*void main(){}
