@@ -43,7 +43,7 @@ void loop(void)
   volts0 = volts0 - .005;
   //psi= (volts0-0.99595617)/0.066932271;
   //psi= (14.940378*volts0)-14.88005943;
-  psi= (14.991578*volts0)-15.02005943;
+  psi= (14.991578*volts0)-15.00005943;
   Serial.println("-----------------------------------------------------------");
   Serial.print("AIN0: "); Serial.print(adc0); Serial.print("  "); Serial.print(volts0,4); Serial.println("V");
   Serial.print("psi: "); Serial.println(psi);
