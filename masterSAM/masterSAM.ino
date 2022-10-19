@@ -48,11 +48,12 @@ void setup() {
   
   //testing
   //feedBackLoop(14.5);
+  
 }
 
 void loop() 
 {
-  airRead();
+  //airRead();
 }
 
 void mainSAM(){
