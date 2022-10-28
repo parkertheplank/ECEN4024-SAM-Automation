@@ -1,12 +1,17 @@
-void mechSetup()
-{
-  pinMode(vib, OUTPUT);
+#define tilt1 51
+#define tilt2 53
+const int on=LOW;
+const int off=HIGH;
+
+void setup() {
+  // put your setup code here, to run once:
   pinMode(tilt1, OUTPUT);
   pinMode(tilt2, OUTPUT);
-  
-  digitalWrite(vib, off);  
+
   digitalWrite(tilt1, off); 
   digitalWrite(tilt2, off);
+
+  tilt(off);
 }
 
 void tilt(int state)
@@ -20,9 +25,7 @@ void tilt(int state)
   digitalWrite(tilt2, off);  
 } 
 
-void vibrate(int state) 
-{
-   digitalWrite(vib, state);  
+void loop() {
+  // put your main code here, to run repeatedly:
+ 
 }
-
-//cannot pass parameters in interrupt so need another function for Button
