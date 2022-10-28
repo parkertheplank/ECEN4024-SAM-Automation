@@ -8,26 +8,15 @@ void airSetup()
    pinMode(airLever, OUTPUT);
    
    digitalWrite(airBleed, off); //bleeding on. 
-   digitalWrite(airValve, off); //valve closed. solenoid without power closed relay inv
-   digitalWrite(airPump, off); //pump off
+   digitalWrite(airValve, off); 
+   digitalWrite(airPump, off); 
    digitalWrite(airLever, off);
 
    airRead(); //initialize psi reading
 }
 
-void feedBackLoop(float targetpsi)
-{
-  airPressurize();
-  while (psi < targetpsi)
-  {
-    airRead();
-    delay(100);
-  }
-  airHalt();
-  bleed(targetpsi);
-}
-
-void airRead()//Read the pressure sensor analog output to match 14.5 psi. 
+//Read the pressure sensor analog output to match 14.5 psi. 
+void airRead()
 {
   adcVal = ads1115.readADC_SingleEnded(1);
   adcVolt = ads1115.computeVolts(adcVal);
@@ -36,13 +25,12 @@ void airRead()//Read the pressure sensor analog output to match 14.5 psi.
   monPrintData();//testing
 }
 
-void bleed(float targetpsi)//Decrease air pressure to desired value
+//Decrease air pressure to desired value
+void airBleed(float targetpsi)
 {
-  Serial.println("\nbleeding");
   digitalWrite(airBleed,off); //bleed air
   
   while (psi > targetpsi){
-    Serial.print("\n\n");
     airRead();
     delay(100);
   }

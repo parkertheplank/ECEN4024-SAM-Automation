@@ -24,5 +24,3 @@ void vibrate(int state)
 {
    digitalWrite(vib, state);  
 }
-
-//cannot pass parameters in interrupt so need another function for Button
