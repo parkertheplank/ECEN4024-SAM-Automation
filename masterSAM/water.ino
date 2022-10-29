@@ -11,10 +11,11 @@ void waterSetup()
   waterClose();
 }
 
-void waterFill() 
+void waterFill(bool second) 
 {
-  digitalWrite(waterValveIn, on);
   digitalWrite(waterValveOut, on);
+  if (second){delay(2000);}//time depressurize after second interation
+  digitalWrite(waterValveIn, on);
   digitalWrite(waterPump, on);
   delay(10000);
 } 

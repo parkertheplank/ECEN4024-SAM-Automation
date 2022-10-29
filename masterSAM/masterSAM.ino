@@ -37,7 +37,12 @@ const int on=LOW;
 const int off=HIGH;
 
 //Constructors
+//data to save
 float psiVals[6];
+float equibVals[6];
+float samVal;
+float airVol;
+//airVars
 int adcVal;
 float adcVolt;
 const float vRef = 5.05;
@@ -46,7 +51,6 @@ float psi;
 float targ;
 float calib;
 Adafruit_ADS1115 ads1115;  // Construct an ads1115 
-
 //flags
 bool start = false;
 int manVib = 0;
@@ -93,8 +97,9 @@ void mainSAM(){
   for(int i=0; i<2; i++){
     
     //WATER FILL UP
+    bool second = (i==0)? false:true;
     tilt(on);
-    waterFill();
+    waterFill(second);
     waterClose();
     tilt(off);
 
@@ -111,6 +116,7 @@ void mainSAM(){
 
     //AIR BLEED
       airBleed();
+      psiVals[(3*i)+j] = psi; //save pressure before release
 
     //AIR PUNCH an VIBRATE
       airEqualize(on);
@@ -120,8 +126,10 @@ void mainSAM(){
       delay(3000);
     //RECORD EQUIB PRESSURE
       airRead();
-      psiVals[(3*i)+j] = psi; 
+      equibVals[(3*i)+j] = psi; //save equilibrium pressure
       airEqualize(off);
     }
   }
+  samVal=2;
+  airVol=2;
 }
