@@ -2,7 +2,7 @@ void uiSetup(){
   
   Serial.begin(9600);
   Serial.print("start");
-  pinMode(startBut, INPUT):
+  pinMode(startBut, INPUT);
   pinMode(vibBut, INPUT);
 }
 

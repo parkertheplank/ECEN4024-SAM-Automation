@@ -1,13 +1,13 @@
 void airSetup()
 {
-   ads1115.begin();  // Initialize ads1015 at the default address 0x48
+   //ads1115.begin();  // Initialize ads1015 at the default address 0x48
    
    pinMode(airPump, OUTPUT);
-   pinMode(airBleed, OUTPUT);
+   pinMode(airBleeder, OUTPUT);
    pinMode(airValve, OUTPUT);
    pinMode(airLever, OUTPUT);
    
-   digitalWrite(airBleed, off); //bleeding on. 
+   digitalWrite(airBleeder, off); //bleeding on. 
    digitalWrite(airValve, off); 
    digitalWrite(airPump, off); 
    digitalWrite(airLever, off);
@@ -18,28 +18,33 @@ void airSetup()
 //Read the pressure sensor analog output to match 14.5 psi. 
 void airRead()
 {
+  float value = (float)analogRead(A15);
+  float realValue = (((value / 1024.0)* 5.09) + 0.01);
+  psi = ((realValue - 0.99595617)/0.066932271);
+  /*
   adcVal = ads1115.readADC_SingleEnded(1);
   adcVolt = ads1115.computeVolts(adcVal);
   psi = (60.000*((adcVolt-.98)/(vRef-.98))); 
   
   monPrintData();//testing
+  */
 }
 
 //Decrease air pressure to desired value
-void airBleed(float targetpsi)
+void airBleed()
 {
-  digitalWrite(airBleed,off); //bleed air
+  digitalWrite(airBleeder,off); //bleed air
   
-  while (psi > targetpsi){
+  while (psi > targ){
     airRead();
     delay(100);
   }
-  digitalWrite(airBleed,on); //close bleeder
+  digitalWrite(airBleeder,on); //close bleeder
 } 
 
 void airPressurize()
 {
-  digitalWrite(airBleed, on); //close bleeder
+  digitalWrite(airBleeder, on); //close bleeder
   digitalWrite(airValve, on); //valve open
   digitalWrite(airPump, on); //start pump
 } 

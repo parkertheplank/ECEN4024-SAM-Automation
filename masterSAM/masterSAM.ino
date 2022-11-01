@@ -10,12 +10,12 @@
 #define waterValveIn 50
 #define waterValveOut 52
 //air
-#define airValve 26
-#define airBleed 25
-#define airPump 5
-#define airLever 6
+#define airValve 46
+#define airBleeder 32
+#define airPump 31
+#define airLever 48
 //mech
-#define vib 7
+#define vib 30
 #define tilt1 51
 #define tilt2 53
 //Input Pins
@@ -58,22 +58,22 @@ int manVib = 0;
 void setup() {
   pinMode(13, OUTPUT); //turns LED on
   uiSetup();
-  //airSetup();
+  airSetup();
   waterSetup();
   mechSetup();
-  attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
-  attachInterrupt(digitalPinToInterrupt(vibBut), vibOn, HIGH); 
-  attachInterrupt(digitalPinToInterrupt(vibBut), vibOff, LOW); 
+  //attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
+  //attachInterrupt(digitalPinToInterrupt(vibBut), vibOn, HIGH); 
+  //attachInterrupt(digitalPinToInterrupt(vibBut), vibOff, LOW); 
 
-  delay(1000);
   //testing
+  delay(6000);
   testing();
   //mainSAM();
-  
 }
 
 void loop() 
 {
+  /*
   if(start){mainSAM();}
   start = false;
 
@@ -81,14 +81,32 @@ void loop()
   while(manVib){ delay(100);}
   if(manVib ==2){vibrate(off);}
   manVib == 0;
+  */
 }
 
 
 
 void testing(){
-  vibrate(on);
-  delay(5000);
-  vibrate(off);
+  int j =0;
+  targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
+  calib = (j==0) ? 15 : ((j==1) ? 10 : 4);
+  Serial.println(targ);
+  Serial.println(psi);
+  airPressurize();
+  while (psi < targ +calib) {airRead(); delay(100); Serial.println(psi);}
+  airHalt();
+
+  //AIR BLEED
+  airBleed();
+  Serial.println("Post Bleed:  ");
+  Serial.print(psi);
+  delay(3000);
+
+  //AIR PUNCH an VIBRATE
+  airEqualize(on);
+  delay(3000);
+  Serial.println(psi);
+  airEqualize(off);
 }
 
 void mainSAM(){
@@ -98,8 +116,9 @@ void mainSAM(){
     
     //WATER FILL UP
     bool second = (i==0)? false:true;
-    tilt(on);
     waterFill(second);
+    tilt(on);
+    delay(10000);
     waterClose();
     tilt(off);
 
@@ -129,6 +148,13 @@ void mainSAM(){
       equibVals[(3*i)+j] = psi; //save equilibrium pressure
       airEqualize(off);
     }
+  }
+
+  for(int n=0; n<6;n++){
+    Serial.print("PSI: ");
+    Serial.print(psiVals[n]);
+    Serial.print("\tEquibPressure: ");
+    Serial.println(equibVals[n]);
   }
   samVal=2;
   airVol=2;

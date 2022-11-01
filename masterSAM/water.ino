@@ -17,7 +17,6 @@ void waterFill(bool second)
   if (second){delay(2000);}//time depressurize after second interation
   digitalWrite(waterValveIn, on);
   digitalWrite(waterPump, on);
-  delay(10000);
 } 
 
 void waterClose()
