@@ -1,6 +1,10 @@
 void airSetup()
 {
-   //ads1115.begin();  // Initialize ads1015 at the default address 0x48
+   if (!ads.begin()) {
+    Serial.println("Failed to initialize ADS.");
+    while (1);
+   }
+   ads.setGain(GAIN_TWOTHIRDS);  // 2/3x gain +/- 6.144V  1 bit = 3mV      0.1875mV (default)
    
    pinMode(airPump, OUTPUT);
    pinMode(airBleeder, OUTPUT);
@@ -12,22 +16,40 @@ void airSetup()
    digitalWrite(airPump, off); 
    digitalWrite(airLever, off);
 
-   airRead(); //initialize psi reading
+   psi[0]=airRead();
+   psi_avg= psi[0];
+   for (int n=1; n<len;n++){
+    psi[n]= psi[0];
+   }
+   run_sum= psi[0]*len;
 }
 
-//Read the pressure sensor analog output to match 14.5 psi. 
-void airRead()
+float airRead()
 {
-  float value = (float)analogRead(A15);
-  float realValue = (((value / 1024.0)* 5.09) + 0.01);
-  psi = ((realValue - 0.99595617)/0.066932271);
-  /*
-  adcVal = ads1115.readADC_SingleEnded(1);
-  adcVolt = ads1115.computeVolts(adcVal);
-  psi = (60.000*((adcVolt-.98)/(vRef-.98))); 
-  
-  monPrintData();//testing
-  */
+  adc0 = ads.readADC_SingleEnded(0);
+  volts0 = adc0 * .0001875;
+  return (14.985078*volts0)-14.99510943;
+}
+
+void airAverage()
+{
+  psi[tail] = airRead();
+
+  run_sum=0;
+  for (int n=0; n<len;n++){
+    run_sum+=psi[n];
+  }
+  psi_avg = run_sum/len;
+
+  if(tail==len-1)
+  {
+    tail=0;
+  }
+  else
+  {
+    tail ++;
+  }
+  delay(100);
 }
 
 //Decrease air pressure to desired value
@@ -35,9 +57,9 @@ void airBleed()
 {
   digitalWrite(airBleeder,off); //bleed air
   
-  while (psi > targ){
-    airRead();
-    delay(100);
+  while (psi_avg > targ){
+    airAverage();
+    monPrintData();
   }
   digitalWrite(airBleeder,on); //close bleeder
 } 

@@ -2,7 +2,6 @@
 //Mega 2560 6 external interrupts, which are 0-5 on pins 2, 3, 21, 20, 19, 18
 
 //-----------------SETUP-------------------------------
-#include <Wire.h>
 #include <Adafruit_ADS1X15.h>
 
 //Relay Pins
@@ -38,19 +37,22 @@ const int off=HIGH;
 
 //Constructors
 //data to save
-float psiVals[6];
-float equibVals[6];
+float psiVals[5];
+float equibVals[5];
 float samVal;
 float airVol;
+
 //airVars
-int adcVal;
-float adcVolt;
-const float vRef = 5.05;
-const float adcOffset = -.28;
-float psi;
 float targ;
 float calib;
-Adafruit_ADS1115 ads1115;  // Construct an ads1115 
+Adafruit_ADS1115 ads;
+int16_t adc0;
+float volts0;
+const int len=10;
+float psi[len];
+float psi_avg;
+float run_sum=0;
+int tail = 0;
 //flags
 bool start = false;
 int manVib = 0;
@@ -62,8 +64,6 @@ void setup() {
   waterSetup();
   mechSetup();
   //attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
-  //attachInterrupt(digitalPinToInterrupt(vibBut), vibOn, HIGH); 
-  //attachInterrupt(digitalPinToInterrupt(vibBut), vibOff, LOW); 
 
   //testing
   delay(6000);
@@ -87,25 +87,45 @@ void loop()
 
 
 void testing(){
-  int j =0;
+  //AIR PRESSURIZATION 
+  Serial.println("---PRESSURIZING---- ");
+  int j =2;
   targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
-  calib = (j==0) ? 15 : ((j==1) ? 10 : 4);
-  Serial.println(targ);
-  Serial.println(psi);
+  calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 3.5);
+  Serial.print("targ psi:  "); Serial.println(targ);
+  monPrintData();
   airPressurize();
-  while (psi < targ +calib) {airRead(); delay(100); Serial.println(psi);}
+  
+  while (psi_avg < targ +calib) {airAverage(); delay(100); monPrintData();}
   airHalt();
+  
+  delay(6000);
+  Serial.println("update:  "); 
+  for (int n=1; n<len*8;n++){
+    airAverage();
+    monPrintData();
+    delay(100);
+   }
+  Serial.println("update:  "); 
+  delay(3000);
 
   //AIR BLEED
+  Serial.println("---BLEEDING---- ");
   airBleed();
-  Serial.println("Post Bleed:  ");
-  Serial.print(psi);
-  delay(3000);
+  Serial.print("final_psi: ");
+  monPrintData();
+  delay(7000);
+  for (int n=1; n<len*8;n++){
+    airAverage();
+    monPrintData();
+    delay(100);
+   }
 
   //AIR PUNCH an VIBRATE
+  Serial.println("---PUNCH---- ");
   airEqualize(on);
-  delay(3000);
-  Serial.println(psi);
+  delay(10000);
+  Serial.print("final_equib: ");Serial.println(airRead());
   airEqualize(off);
 }
 
@@ -130,12 +150,12 @@ void mainSAM(){
       calib = (j==0) ? 2 : ((j==1) ? 1 : .5);
       
       airPressurize();
-      while (psi < targ + calib) {airRead; delay(100);}
+      while (psi_avg < targ + calib) {airAverage;}
       airHalt();
 
     //AIR BLEED
       airBleed();
-      psiVals[(3*i)+j] = psi; //save pressure before release
+      psiVals[(3*i)+j] = psi_avg; //save pressure before release
 
     //AIR PUNCH an VIBRATE
       airEqualize(on);
@@ -144,8 +164,8 @@ void mainSAM(){
       vibrate(off);
       delay(3000);
     //RECORD EQUIB PRESSURE
-      airRead();
-      equibVals[(3*i)+j] = psi; //save equilibrium pressure
+      airAverage();
+      equibVals[(3*i)+j] = psi_avg; //save equilibrium pressure
       airEqualize(off);
     }
   }
