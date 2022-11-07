@@ -55,6 +55,7 @@ float run_sum=0;
 int tail = 0;
 //flags
 bool start = false;
+bool second;
 int manVib = 0;
 
 void setup() {
@@ -64,10 +65,8 @@ void setup() {
   waterSetup();
   mechSetup();
   //attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
-
-  //testing
-  delay(6000);
-  testing();
+  delay(2000);
+  digitalWrite(airValve, on);
   //mainSAM();
 }
 
@@ -87,55 +86,18 @@ void loop()
 
 
 void testing(){
-  //AIR PRESSURIZATION 
-  Serial.println("---PRESSURIZING---- ");
-  int j =2;
-  targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
-  calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 3.5);
-  Serial.print("targ psi:  "); Serial.println(targ);
-  monPrintData();
-  airPressurize();
-  
-  while (psi_avg < targ +calib) {airAverage(); delay(100); monPrintData();}
-  airHalt();
-  
-  delay(6000);
-  Serial.println("update:  "); 
-  for (int n=1; n<len*8;n++){
-    airAverage();
-    monPrintData();
-    delay(100);
-   }
-  Serial.println("update:  "); 
-  delay(3000);
 
-  //AIR BLEED
-  Serial.println("---BLEEDING---- ");
-  airBleed();
-  Serial.print("final_psi: ");
-  monPrintData();
-  delay(7000);
-  for (int n=1; n<len*8;n++){
-    airAverage();
-    monPrintData();
-    delay(100);
-   }
-
-  //AIR PUNCH an VIBRATE
-  Serial.println("---PUNCH---- ");
-  airEqualize(on);
-  delay(10000);
-  Serial.print("final_equib: ");Serial.println(airRead());
-  airEqualize(off);
 }
 
 void mainSAM(){
 //-----------------FINAL PROCESS-------------------------------
   //two main iterations
   for(int i=0; i<2; i++){
-    
+    Serial.print("\nIteration i:");
+    Serial.println(i);
+    Serial.println();
     //WATER FILL UP
-    bool second = (i==0)? false:true;
+    second = (i==0) ? false : true;
     waterFill(second);
     tilt(on);
     delay(10000);
@@ -144,17 +106,43 @@ void mainSAM(){
 
     //three iterations for 3 pressures
     for(int j=0; j<3; j++){
+      Serial.print("\nIteration j:");
+      Serial.println(j);
+      Serial.println();
     //AIR PRESSURIZATION 
       //set target pressure and calibration offset
       targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
-      calib = (j==0) ? 2 : ((j==1) ? 1 : .5);
+      calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 3.5);
+      Serial.print("targ psi:  "); Serial.println(targ);
       
       airPressurize();
-      while (psi_avg < targ + calib) {airAverage;}
+      while (psi_avg < targ + calib) {airAverage; delay(100); monPrintData();}
       airHalt();
 
+      //give time for pressure to settle and update
+      delay(6000);
+      Serial.println("update:  "); 
+      for (int n=1; n<len*8;n++){
+        airAverage();
+        monPrintData();
+        delay(100);
+       }
+      Serial.println("update:  "); 
+      delay(3000);
+
     //AIR BLEED
+      Serial.println("---BLEEDING---- ");
       airBleed();
+
+      //give time for psi to settle and 
+      delay(7000);
+      for (int n=1; n<len*8;n++){
+        airAverage();
+        monPrintData();
+        delay(100);
+       }
+      Serial.print("final_psi: ");
+      monPrintData();
       psiVals[(3*i)+j] = psi_avg; //save pressure before release
 
     //AIR PUNCH an VIBRATE
@@ -162,9 +150,16 @@ void mainSAM(){
       vibrate(on);
       delay(3000);
       vibrate(off);
-      delay(3000);
+      delay(7000);
+      for (int n=1; n<len*8;n++){
+        airAverage();
+        monPrintData();
+        delay(100);
+       }
     //RECORD EQUIB PRESSURE
       airAverage();
+      Serial.print("final_equib: ");
+      monPrintData();
       equibVals[(3*i)+j] = psi_avg; //save equilibrium pressure
       airEqualize(off);
     }

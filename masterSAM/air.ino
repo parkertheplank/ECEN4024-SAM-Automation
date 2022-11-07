@@ -49,7 +49,6 @@ void airAverage()
   {
     tail ++;
   }
-  delay(100);
 }
 
 //Decrease air pressure to desired value
