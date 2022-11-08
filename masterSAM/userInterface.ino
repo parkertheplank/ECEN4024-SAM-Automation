@@ -7,7 +7,6 @@ void uiSetup(){
 }
 
 //ISRs for buttons
-void start_test(){start = true;}
 void vibOn(){manVib = 1;}
 void vibOff(){manVib = 2;}
 

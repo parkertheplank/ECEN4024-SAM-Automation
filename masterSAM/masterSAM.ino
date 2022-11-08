@@ -61,13 +61,17 @@ int manVib = 0;
 void setup() {
   pinMode(13, OUTPUT); //turns LED on
   uiSetup();
-  airSetup();
+  //airSetup();
   waterSetup();
   mechSetup();
-  //attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
-  delay(2000);
-  digitalWrite(airValve, on);
+  attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
+  
   //mainSAM();
+}
+
+void start_test()
+{
+  Serial.println("pressed");
 }
 
 void loop() 
@@ -82,8 +86,6 @@ void loop()
   manVib == 0;
   */
 }
-
-
 
 void testing(){
 
