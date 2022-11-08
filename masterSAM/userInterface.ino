@@ -1,7 +1,3 @@
-#include <LiquidCrystal.h>
-
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void uiSetup(){
   
@@ -9,13 +5,13 @@ void uiSetup(){
   Serial.println("-----START-------");
   pinMode(startBut, INPUT);
   pinMode(vibBut, INPUT);
+
   lcd.begin(16, 2);
   lcd.print("TEAM SOLENOID");
 }
 
 //ISRs for buttons
-void vibOn(){manVib = 1;}
-void vibOff(){manVib = 2;}
+void start_test(){start = true;}
 
 void monPrintData()
 {
@@ -26,6 +22,7 @@ void monPrintData()
   Serial.print("\tpsi:   ");
   Serial.println(psi_avg);
 }
+
 void lcdPrint()
 {
   //lcd.setCursor(0,0); //col 0 row 0
@@ -81,3 +78,7 @@ void airUSBwrite()
 {
 
 } //Record the air pressure data.
+
+
+void airUSBwrite() {} //Record the air pressure data.
+
