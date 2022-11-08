@@ -19,7 +19,6 @@
 #define tilt2 53
 //Input Pins
 #define startBut 3
-#define vibBut 2
 //LCD Pins
 #define lcdRS A3
 #define lcdEN A5
@@ -31,14 +30,25 @@
 #define sda 20
 #define scl 21
 
+//LCD Flags
+bool manFlag = true;
+bool waterFlag = false;
+bool pressFlag = false;
+bool bleedFlag = false;
+bool equibFlag = false;
+bool pValFlag = false;
+bool eValFlag = false;
+
 //Constants
-const int on=LOW;
+const int on=LOW; //for relays which are inverted
 const int off=HIGH;
 
 //Constructors
 //data to save
-float psiVals[5];
-float equibVals[5];
+int j; //iteration for 3 air 
+int i; //iteration for 2 fillups
+float pVals[5]; //values
+float eVals[5];
 float samVal;
 float airVol;
 
@@ -55,50 +65,49 @@ float run_sum=0;
 int tail = 0;
 //flags
 bool start = false;
+bool written =false;
 bool second;
 int manVib = 0;
 
 void setup() {
-  pinMode(13, OUTPUT); //turns LED on
   uiSetup();
-  //airSetup();
+  airSetup();
   waterSetup();
   mechSetup();
   attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); //triggers whenever pin is low
-  
-  //mainSAM();
-}
-
-void start_test()
-{
-  Serial.println("pressed");
 }
 
 void loop() 
 {
-  /*
-  if(start){mainSAM();}
-  start = false;
-
-  if(manVib ==1){vibrate(on);}
-  while(manVib){ delay(100);}
-  if(manVib ==2){vibrate(off);}
-  manVib == 0;
-  */
+  //write message to lcd 
+  if(!written)
+  {
+    lcdPrint();
+    written = true;
+  }
+  //detect if start button has been pressed
+  if(start)
+  { 
+    //mainSAM();
+    testing();
+    start = false;
+  }
 }
 
 void testing(){
-
+   digitalWrite(airValve, off); 
+   delay(5000);
+   digitalWrite(airValve, on); 
 }
 
 void mainSAM(){
 //-----------------FINAL PROCESS-------------------------------
   //two main iterations
-  for(int i=0; i<2; i++){
-    Serial.print("\nIteration i:");
-    Serial.println(i);
-    Serial.println();
+  for(i=0; i<2; i++){
     //WATER FILL UP
+    equibFlag = false; waterFlag = true; eValFlag=false;
+    lcdPrint();
+    
     second = (i==0) ? false : true;
     waterFill(second);
     tilt(on);
@@ -107,15 +116,14 @@ void mainSAM(){
     tilt(off);
 
     //three iterations for 3 pressures
-    for(int j=0; j<3; j++){
-      Serial.print("\nIteration j:");
-      Serial.println(j);
-      Serial.println();
+    for(j=0; j<3; j++){
     //AIR PRESSURIZATION 
+      waterFlag = false; pressFlag = true; eValFlag=false;
+      lcdPrint();
+      
       //set target pressure and calibration offset
       targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
       calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 3.5);
-      Serial.print("targ psi:  "); Serial.println(targ);
       
       airPressurize();
       while (psi_avg < targ + calib) {airAverage; delay(100); monPrintData();}
@@ -123,56 +131,44 @@ void mainSAM(){
 
       //give time for pressure to settle and update
       delay(6000);
-      Serial.println("update:  "); 
       for (int n=1; n<len*8;n++){
         airAverage();
         monPrintData();
         delay(100);
        }
-      Serial.println("update:  "); 
       delay(3000);
 
     //AIR BLEED
-      Serial.println("---BLEEDING---- ");
+      pressFlag = false; bleedFlag = true;
+      lcdPrint();
+      
       airBleed();
-
-      //give time for psi to settle and 
-      delay(7000);
-      for (int n=1; n<len*8;n++){
-        airAverage();
-        monPrintData();
-        delay(100);
-       }
-      Serial.print("final_psi: ");
-      monPrintData();
-      psiVals[(3*i)+j] = psi_avg; //save pressure before release
-
-    //AIR PUNCH an VIBRATE
+      
+      delayAndUpdate(100, 7000); //give time for psi to settle and 
+      pVals[(3*i)+j] = psi_avg; //save pressure before release
+      
+      pValFlag=true; 
+      lcdPrint();
+      
+    //AIR PUNCH AND VIBRATE
+      bleedFlag = false; equibFlag = true;
+      lcdPrint();
+      
       airEqualize(on);
       vibrate(on);
       delay(3000);
       vibrate(off);
-      delay(7000);
-      for (int n=1; n<len*8;n++){
-        airAverage();
-        monPrintData();
-        delay(100);
-       }
+      delayAndUpdate(100, 7000);
+    
     //RECORD EQUIB PRESSURE
       airAverage();
-      Serial.print("final_equib: ");
-      monPrintData();
-      equibVals[(3*i)+j] = psi_avg; //save equilibrium pressure
+      eVals[(3*i)+j] = psi_avg; //save equilibrium pressure
+
+      pValFlag=false; eValFlag=true;
+      lcdPrint();
       airEqualize(off);
+      delay(3000);
     }
   }
-
-  for(int n=0; n<6;n++){
-    Serial.print("PSI: ");
-    Serial.print(psiVals[n]);
-    Serial.print("\tEquibPressure: ");
-    Serial.println(equibVals[n]);
-  }
-  samVal=2;
-  airVol=2;
+  samVal = (eVals[0]+eVal[1]+eVal[2])-(eVals[3]+eVal[4]+eVal[5]); //calculate SAM num
 }

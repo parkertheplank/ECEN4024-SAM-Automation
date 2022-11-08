@@ -31,6 +31,16 @@ float airRead()
   return (14.985078*volts0)-14.99510943;
 }
 
+//updates running average and waits amount of time
+void delayAndUpdate(int updates, int delay_ms)
+{
+  for (int n=0; n < updates;n++)
+  {
+      airAverage();
+      delay(delay_ms/updates);
+  }
+}
+
 void airAverage()
 {
   psi[tail] = airRead();

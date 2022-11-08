@@ -7,8 +7,7 @@ void uiSetup(){
 }
 
 //ISRs for buttons
-void vibOn(){manVib = 1;}
-void vibOff(){manVib = 2;}
+void start_test(){start = true;}
 
 void monPrintData()
 {
@@ -19,4 +18,5 @@ void monPrintData()
   Serial.print("\tpsi:   ");
   Serial.println(psi_avg);
 }
+
 void airUSBwrite() {} //Record the air pressure data.
