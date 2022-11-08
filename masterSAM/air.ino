@@ -37,6 +37,7 @@ void delayAndUpdate(int updates, int delay_ms)
   for (int n=0; n < updates;n++)
   {
       airAverage();
+      serialPrintAll("Updating: ");
       delay(delay_ms/updates);
   }
 }
@@ -68,7 +69,7 @@ void airBleed()
   
   while (psi_avg > targ){
     airAverage();
-    monPrintData();
+    serialPrintAll("Bleeding: ");
   }
   digitalWrite(airBleeder,on); //close bleeder
 } 
