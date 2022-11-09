@@ -116,7 +116,7 @@ void mainSAM(){
       calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 3.5);
       
       airPressurize();
-      while (psi_avg < targ + calib) {airAverage; delay(100); serialPrintAll("Pressurizing: ");}
+      while (psi_avg < targ + calib) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
       airHalt();
 
       //give time for pressure to settle and update
