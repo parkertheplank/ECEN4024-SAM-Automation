@@ -27,56 +27,24 @@ void serialPrintAll(String phase)
 
 void lcdPrint()
 {
-  //lcd.setCursor(0,0); //col 0 row 0
-  //lcd.setCursor(0,1); //col 0 row 1 
-  //first line logic
-  if(manFlag==true) //water pump message
-  {
-    lcd.setCursor(0,0);
-    lcd.print("Prepare SAM");
-    lcd.setCursor(0,1);
-    lcd.print("Then Press Start");  
-  }
-  if(bleedFlag==true) //water pump message
-  {
-    lcd.setCursor(0,0);
-    lcd.print("Bleeding Air"); 
-  }
-  if(waterFlag==true) //water pump message
-  {
-    lcd.setCursor(0,0);
-    lcd.print("Water Pumping");   
-  }
-  if(pressFlag==true) //water pump message
-  {
-    lcd.setCursor(0,0);
-    lcd.print("Pressurizing");   
-  }
-  if(equibFlag==true) //water pump message
-  {
-    lcd.setCursor(0,0);
-    lcd.print("Equalizing");   
-  }
-  //Second line logic
-  if(pValFlag==true) 
-  {
-    lcd.setCursor(0,1);
-     msg = "Before:" + String(eVals[(i*3)+j],2);
-    lcd.print(msg);
-  }
-  else if(eValFlag==true) 
-  {
-    lcd.setCursor(0,1);
-    msg = "After:" + String(pVals[(i*3)+j],2);
-    lcd.print(msg);  
-  }
-  else if(!usbFlag) 
-  {
-    lcd.setCursor(0,1);
-    lcd.print("Insert Flashdrive");  
-  }
-  else
-  {lcd.clear();}
+  String line1;
+  String line2;
+  
+  if(manFlag==true)      {line1 ="Prepare SAM"; line2 ="Then Press Start";}
+  if(bleedFlag==true)    {line1 = "Bleeding Air";}
+  if(waterFlag==true)    {line1= "Water Pumping";}
+  if(pressFlag==true)    {line1 = "Pressurizing"; }
+  if(equibFlag==true)    {line1 = "Equalizing"; }
+
+  if(pValFlag==true)     {line2 = "Before:" + String(eVals[(i*3)+j],2);}
+  if(eValFlag==true)     {line2 = "After:" + String(pVals[(i*3)+j],2); }
+  if(!usbFlag)           {line2 = "Insert Flashdrive"; }
+  else                   {line2 = "";}
+
+  lcd.clear();
+  lcd.print(line1); 
+  lcd.setCursor(0,1);
+  lcd.print(line2);
 }
 
 void usbWrite() 

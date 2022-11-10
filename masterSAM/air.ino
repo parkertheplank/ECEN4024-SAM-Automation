@@ -28,7 +28,10 @@ float airRead()
 {
   adc0 = ads.readADC_SingleEnded(0);
   volts0 = adc0 * .0001875;
-  return (14.985078*volts0)-14.99510943;
+  
+  if (volts0 < 2.5)       return (14.985078*volts0)-14.99510943; //0-22.5 psi or 1-2.5V
+  else if (volts0 < 3.5)  return (14.985078*volts0)-14.99510943; //22.5-37.5 psi or 2.5-3.5V
+  else                    return (14.985078*volts0)-14.99510943; //37.5-60 psi or 3.5-5.0V
 }
 
 //updates running average and waits amount of time

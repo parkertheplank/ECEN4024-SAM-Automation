@@ -49,7 +49,6 @@ float samVal; //SAM value
 float airVol; //air volume
 //LCD
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-String msg;
 bool manFlag = true; //flags for phases of Sam test
 bool waterFlag = false;
 bool pressFlag = false;
@@ -64,7 +63,7 @@ float targ;
 float calib;
 int16_t adc0;
 float volts0;
-const int len=10;
+const int len=5;
 float psi[len];
 float psi_avg;
 float run_sum=0;
@@ -87,7 +86,9 @@ void loop()
 
 void testing()
 {
-  
+  airPressurize();
+  while (psi_avg < 50) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
+  airHalt();
 }
 
 void mainSAM(){
@@ -113,7 +114,7 @@ void mainSAM(){
       
       //set target pressure and calibration offset
       targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
-      calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 3.5);
+      calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 7);
       
       airPressurize();
       while (psi_avg < targ + calib) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
