@@ -75,20 +75,22 @@ void setup() {
   waterSetup();
   mechSetup();
   //interupt for start button
-  attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH);  
+  attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); 
 }
 
 void loop() 
 {
   if(!written){lcdPrint();written = true;} //write begining message t lcd
-  if(start){ mainSAM();start = false;} //start test when button pressed
+  if(start){ testing();start = false;} //start test when button pressed
+  airAverage();
+  serialPrintAll("Calib:  ");
 }
 
 void testing()
 {
-  airPressurize();
-  while (psi_avg < 50) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
-  airHalt();
+   airPressurize();
+   while (psi_avg < 56) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
+   airHalt();
 }
 
 void mainSAM(){
