@@ -1,5 +1,5 @@
 #include <SD.h>
- 
+//pins are 5v to 5V, GND to GND, CS to 10, DI to 11, DO to 12, CLK to 13 
 File myFile;
  
 void setup()
