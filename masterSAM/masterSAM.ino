@@ -2,11 +2,10 @@
 //Mega 2560 6 external interrupts, which are 0-5 on pins 2, 3, 21, 20, 19, 18
 
 //-----------------SETUP-------------------------------
-//-------LIBRARIES-----
 #include <Adafruit_ADS1X15.h> 
 #include <LiquidCrystal.h>
 
-//----PINS----
+//------------PINS----------------------
 //Water
 #define waterPump 33
 #define waterValveIn 50
@@ -29,19 +28,17 @@
 #define d5 9
 #define d6 8
 #define d7 7
-//Comm
+//Communication
 #define sda 20
 #define scl 21
 
-//----CONSTRUCTORS-----
+//---------------CONSTRUCTORS---------------
 //Main
 const int on=LOW; //for relays which are inverted
 const int off=HIGH;
 int j; //iteration for 3 air cycles
 int i; //iteration for 2 water fillups
 bool start = false; //track whether main test has started
-bool written = false; //check whether lcd written to yet
-bool second; //tracks whether second main iteration
 //Data
 float pVals[5]; //psi before punch after bleeding
 float eVals[5]; //psi of equiblibrium pressure
@@ -49,14 +46,15 @@ float samVal; //SAM value
 float airVol; //air volume
 //LCD
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-bool manFlag = true; //flags for phases of Sam test
-bool waterFlag = false;
-bool pressFlag = false;
-bool bleedFlag = false;
-bool equibFlag = false;
-bool pValFlag = false;
-bool eValFlag = false;
-bool usbFlag = false;
+void lcdPrint(int,int);
+#define manFlag 1
+#define waterFlag 2
+#define pressFlag 3
+#define bleedFlag 4
+#define equibFlag 5
+#define pValFlag 6
+#define eValFlag 7
+#define usbFlag 8
 //Air
 Adafruit_ADS1115 ads;
 float targ;
@@ -69,79 +67,62 @@ float psi_avg;
 float run_sum=0;
 int tail = 0;
 
-void setup() {
+void setup() 
+{
   uiSetup();
   airSetup();
   waterSetup();
   mechSetup();
-  //interupt for start button
-  attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH); 
+  attachInterrupt(digitalPinToInterrupt(startBut), start_test, HIGH);   //interupt for start button
 }
 
-void loop() 
-{
-  if(!written){lcdPrint();written = true;} //write begining message t lcd
-  if(start){ testing();start = false;} //start test when button pressed
-  airAverage();
-  serialPrintAll("Calib:  ");
-}
+void start_test(){start = true;} //ISR for buttons
+void loop() { if(start){ mainSAM();start = false;}} 
 
 void testing()
 {
    airPressurize();
    while (psi_avg < 56) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
    airHalt();
+   digitalWrite(airBleeder,off);
 }
 
 void mainSAM(){
 //-----------------FINAL PROCESS-------------------------------
   //two main iterations
   for(i=0; i<2; i++){
-    //WATER FILL UP
-    equibFlag = false; waterFlag = true; eValFlag=false;
-    lcdPrint();
-    
-    second = (i==0) ? false : true;
-    waterFill(second);
+//-----------------WATER FILL UP-----------------------------
+    lcdPrint(waterFlag,0);
+    waterFill(i);//on second iteration i causes delay to depressurize
     tilt(on);
     delay(10000);
     waterClose();
     tilt(off);
 
-    //three iterations for 3 pressures
-    for(j=0; j<3; j++){
-    //AIR PRESSURIZATION 
-      waterFlag = false; pressFlag = true; eValFlag=false;
-      lcdPrint();
-      
-      //set target pressure and calibration offset
-      targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45);
-      calib = (j==0) ? 1.5 : ((j==1) ? 2.5 : 7);
-      
-      airPressurize();
-      while (psi_avg < targ + calib) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
+    for(j=0; j<3; j++) //three iterations for 3 pressures
+    {
+//-----------------AIR PRESSURIZATION---------------------
+      lcdPrint(pressFlag,0);
+      targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
+      calib = (j==0) ? 2.5 : ((j==1) ? 3.5 : 4.5);   //and calibration offset
+      airPressurize(); 
+      while (psi_avg < targ + calib) 
+      {
+         airAverage(); delay(100); 
+         serialPrintAll("Pressurizing: ");
+      }
       airHalt();
+      delayAndUpdate(1000, 10000); //give time for psi to settle, update average
 
-      //give time for pressure to settle and update
-      delayAndUpdate(100, 7000);
-
-    //AIR BLEED
-      pressFlag = false; bleedFlag = true;
-      lcdPrint();
-      
+//---------------------AIR BLEED---------------------------
+      lcdPrint(bleedFlag,0);
       airBleed();
-      
-      delayAndUpdate(100, 5000); //give time for psi to settle and 
-      pVals[(3*i)+j] = psi_avg; //save pressure before release
+      delayAndUpdate(200, 5000);
+      pVals[(3*i)+j] = psi_avg; //record pre-punch psi
       serialPrintAll("Pre-Punch Val: ");
       
-      pValFlag=true; 
-      lcdPrint();
-      
-    //AIR PUNCH AND VIBRATE
-      bleedFlag = false; equibFlag = true;
-      lcdPrint();
-      
+//----------------AIR PUNCH AND VIBRATE-----------------------
+      lcdPrint(equibFlag, pValFlag); //display pre punch psi
       airEqualize(on);
       for(int k=0;k<3;k++){
         vibrate(on);
@@ -149,22 +130,16 @@ void mainSAM(){
         vibrate(off);
         delay(1000);
       }
-      delayAndUpdate(100, 7000);
-    
-    //RECORD EQUIB PRESSURE
-      eVals[(3*i)+j] = psi_avg; //save equilibrium pressure
+      delayAndUpdate(200, 5000);
+      eVals[(3*i)+j] = psi_avg; //record equib psi
       serialPrintAll("Equib Val: ");
-
-      pValFlag=false; eValFlag=true;
-      lcdPrint();
+      lcdPrint(equibFlag, eValFlag); //display equib psi
       airEqualize(off);
-      delay(3000);
+      delay(3000); //time to see value
     }
   }
  
   samVal = (eVals[0]+eVals[1]+eVals[2])-(eVals[3]+eVals[4]+eVals[5]); //calculate SAM num
   usbWrite(); 
-
-  equibFlag=false; manFlag=true;
-  lcdPrint();
+  lcdPrint(manFlag, manFlag);
 }

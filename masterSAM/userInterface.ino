@@ -1,16 +1,11 @@
-
 void uiSetup(){
-  
   Serial.begin(9600);
   Serial.println("-----START-------");
   pinMode(startBut, INPUT);
 
   lcd.begin(16, 2);
-  //lcd.print("TEAM SOLENOID");
+  lcdPrint(manFlag, manFlag);
 }
-
-//ISRs for buttons
-void start_test(){start = true;}
 
 void serialPrintAll(String phase)
 {
@@ -25,28 +20,34 @@ void serialPrintAll(String phase)
   Serial.println(psi_avg,2);
 }
 
-void lcdPrint()
+void lcdPrint(int state, int dataState)
 {
   String line1;
   String line2;
-  
-  if(manFlag==true)      {line1 ="Prepare SAM"; line2 ="Then Press Start";}
-  if(bleedFlag==true)    {line1 = "Bleeding Air";}
-  if(waterFlag==true)    {line1= "Water Pumping";}
-  if(pressFlag==true)    {line1 = "Pressurizing"; }
-  if(equibFlag==true)    {line1 = "Equalizing"; }
 
-  if(pValFlag==true)     {line2 = "Before:" + String(eVals[(i*3)+j],2);}
-  if(eValFlag==true)     {line2 = "After:" + String(pVals[(i*3)+j],2); }
-  if(!usbFlag)           {line2 = "Insert Flashdrive"; }
-  else                   {line2 = "";}
+  switch (state)
+  {
+    case manFlag:       line1 = "Prepare SAM"; break;
+    case bleedFlag:     line1 = "Bleeding Air"; break;
+    case waterFlag:     line1= "Water Pumping"; break;
+    case pressFlag:     line1 = "Pressurizing"; break;
+    case equibFlag:     line1 = "Equalizing"; break;
+  }
+
+  switch (dataState)
+  {
+    case manFlag:       line2 ="Then Press Start"; break;
+    case pValFlag:      line2 = "Before:" + String(eVals[(i*3)+j],2); break;
+    case eValFlag:      line2 = "After:" + String(pVals[(i*3)+j],2); break;
+    case usbFlag:       line2 = "Insert Flashdrive"; break;
+    default:            line2 = ""; break;
+  }
 
   lcd.clear();
   lcd.print(line1); 
   lcd.setCursor(0,1);
   lcd.print(line2);
 }
-
 void usbWrite() 
 {
 
