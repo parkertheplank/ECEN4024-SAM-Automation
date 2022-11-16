@@ -1,8 +1,8 @@
 void uiSetup(){
   Serial.begin(9600);
   Serial.println("-----START-------");
-  pinMode(startBut, INPUT);
-
+  pinMode(sBut, INPUT);
+  attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
   lcd.begin(16, 2);
   lcdPrint(manFlag, manFlag);
 }
@@ -10,8 +10,6 @@ void uiSetup(){
 void serialPrintAll(String phase)
 {
   Serial.print(phase);
-  Serial.print("adcval:  ");
-  Serial.print(adc0,8);
   Serial.print("  adcVolt:  ");
   Serial.print(volts0,4);
   Serial.print("  psi sample:   ");
@@ -20,7 +18,7 @@ void serialPrintAll(String phase)
   Serial.println(psi_avg,2);
 }
 
-void lcdPrint(int state, int dataState)
+void lcdPrint(int state, int dataState = noDatFlag)
 {
   String line1;
   String line2;
@@ -40,7 +38,7 @@ void lcdPrint(int state, int dataState)
     case pValFlag:      line2 = "Before:" + String(eVals[(i*3)+j],2); break;
     case eValFlag:      line2 = "After:" + String(pVals[(i*3)+j],2); break;
     case usbFlag:       line2 = "Insert Flashdrive"; break;
-    default:            line2 = ""; break;
+    case noDatFlag:             line2 = ""; break;
   }
 
   lcd.clear();
@@ -48,6 +46,7 @@ void lcdPrint(int state, int dataState)
   lcd.setCursor(0,1);
   lcd.print(line2);
 }
+
 void usbWrite() 
 {
 

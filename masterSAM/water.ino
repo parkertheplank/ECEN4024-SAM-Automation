@@ -3,11 +3,11 @@ void waterSetup()
   pinMode(waterPump, OUTPUT);
   pinMode(waterValveIn, OUTPUT);
   pinMode(waterValveOut, OUTPUT);
-
+  
   digitalWrite(waterValveIn, off);
   digitalWrite(waterValveOut, off);
   digitalWrite(waterPump, off);
-
+  
   waterClose();
 }
 

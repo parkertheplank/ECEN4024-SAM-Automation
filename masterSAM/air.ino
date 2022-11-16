@@ -16,35 +16,20 @@ void airSetup()
    digitalWrite(airPump, off); 
    digitalWrite(airLever, off);
 
-   psi[0]=airRead();
-   psi_avg= psi[0];
-   for (int n=1; n<len;n++){
-    psi[n]= psi[0];
-   }
-   run_sum= psi[0]*len;
+   //initialize airReadings
+   psi[0] = airRead();
+   psi_avg = psi[0];
+   for (int n=1; n<len;n++){ psi[n]= psi[0];}
 }
 
 float airRead()
 {
-  adc0 = ads.readADC_SingleEnded(0);
+  int16_t adc0 = ads.readADC_SingleEnded(0);
   volts0 = adc0 * .0001875;
-
-  return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+(.8268*pow(volts0,2))+(14.2527*volts0)-14.8514;
-
-  /*
-  //return (14.9953*volts0)-15.0628; //1-5V overall range from new vals
-  //return (14.985078*volts0)-14.99510943; //1-5V overall from old vals
-  //return (15.0250*volts0)-15.1109; //0-22.5 psi or 1-2.5V
-  //return (14.9735*volts0)-15.0050; //22.5-37.5 psi or 2.5-3.5V
-  //return (14.9854*volts0)-15.0025; //37.5-60 psi or 3.5-5.0V
-  //return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+(.8268*pow(volts0,2))+(14.2527*volts0)-14.8564; //original from matlab polyfit
-  if (volts0 < 2.5)       return (15.0250*volts0)-15.1109; //0-22.5 psi or 1-2.5V
-  else if (volts0 < 3.5)  return (14.9735*volts0)-15.0050; //22.5-37.5 psi or 2.5-3.5V
-  else                    return (14.9854*volts0)-15.0025; //37.5-60 psi or 3.5-5.0V
-  */
+  return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+
+         (.8268*pow(volts0,2))  +(14.2527*volts0)     -14.8514;
 }
 
-//updates running average and waits amount of time
 void delayAndUpdate(int updates, int delay_ms)
 {
   for (int n=0; n < updates;n++)
@@ -57,25 +42,18 @@ void delayAndUpdate(int updates, int delay_ms)
 
 void airAverage()
 {
+  float run_sum = 0;
   psi[tail] = airRead();
-
-  run_sum=0;
-  for (int n=0; n<len;n++){
+  for (int n=0; n<len ;n++){
     run_sum+=psi[n];
   }
   psi_avg = run_sum/len;
-
   if(tail==len-1)
-  {
     tail=0;
-  }
   else
-  {
     tail ++;
-  }
 }
 
-//Decrease air pressure to desired value
 void airBleed()
 {
   digitalWrite(airBleeder,off); //bleed air
@@ -100,7 +78,4 @@ void airHalt()
   digitalWrite(airPump, off); //stop pump
 } 
 
-void airEqualize(int state) 
-{
-  digitalWrite(airLever,state);
-} 
+void airEqualize(int state) {digitalWrite(airLever,state);} 
