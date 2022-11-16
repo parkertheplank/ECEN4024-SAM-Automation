@@ -7,7 +7,7 @@ void uiSetup(){
   lcdPrint(manFlag, manFlag);
 }
 
-void serialPrintAll(String phase)
+void sPrint(String phase)
 {
   Serial.print(phase);
   Serial.print("  adcVolt:  ");

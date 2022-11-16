@@ -6,11 +6,11 @@
 #include <LiquidCrystal.h>
 //----------------CONSTANTS-------------------------------
 //Pins
-const int waterPump = 33, waterValveIn = 50, waterValveOut = 52;                 //Water
-const int airValve  = 46, airBleeder   = 32, airPump       = 31, airLever  = 48; //Air
-const int vib = 30, tilt1 = 51, tilt2 = 53;                                      //Mechanical                                                                                
-const int rs  = 12, en  = 11, d4   = 10, d5 = 9, d6 = 8, d7 = 7;                 //LCD    
-const int sda = 20, scl = 21, sBut = 3;                                          //Comm and Button                     
+const int waterPump = 33,waterValveIn = 50,waterValveOut = 52;       //Water
+const int airValve = 46,airBleeder = 32,airPump = 31,airLever  = 48; //Air
+const int vib = 30,tilt1 = 51,tilt2 = 53;                            //Mechanical                                                                                
+const int rs = 12,en = 11,d4 = 10,d5 = 9,d6 = 8,d7 = 7;              //LCD    
+const int sda = 20,scl = 21,sBut = 3;                                //Comm and Button                     
 //Other
 const int manFlag  = 1, waterFlag = 2, pressFlag = 3, bleedFlag = 4, equibFlag = 5; //LCD Status flags
 const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9;
@@ -36,12 +36,25 @@ void setup()
 }
 
 void start_test(){start = true;} //ISR for buttons
-void loop() { if(start){ mainSAM(); start = false;}} 
+void loop() 
+{ 
+  if(start)
+  { 
+    testing(); 
+    start = false;
+  }
+  delayAndUpdate(50,5000);
+  Serial.println("\n____________ON_____________");
+  digitalWrite(waterValveOut,on);
+  delayAndUpdate(50,5000);
+  digitalWrite(waterValveOut,off);
+  Serial.println("\n____________OFF_____________");
+} 
 
 void testing()
 {
    airPressurize();
-   while (psi_avg < 56) {airAverage(); delay(100); serialPrintAll("Pressurizing: ");}
+   while (psi_avg < 30) {airAverage(); delay(100); sPrint("Pressurizing: ");}
    airHalt();
    digitalWrite(airBleeder,off);
 }
@@ -67,7 +80,7 @@ void mainSAM(){
       while (psi_avg < targ + calib) 
       {
          airAverage(); delay(100); 
-         serialPrintAll("Pressurizing: ");
+         sPrint("Pressurizing: ");
       }
       airHalt();
       delayAndUpdate(100, 4000); //give time for psi to settle, update average
@@ -77,7 +90,7 @@ void mainSAM(){
       airBleed();
       delayAndUpdate(200, 5000);
       pVals[(3*i)+j] = psi_avg; //record pre-punch psi
-      serialPrintAll("Pre-Punch Val: ");
+      sPrint("Pre-Punch Val: ");
       
 //----------------AIR PUNCH AND VIBRATE-----------------------
       lcdPrint(equibFlag, pValFlag); //display pre punch psi
@@ -91,7 +104,7 @@ void mainSAM(){
       
       delayAndUpdate(100, 3000);
       eVals[(3*i)+j] = psi_avg; //record equib psi
-      serialPrintAll("Equib Val: ");
+      sPrint("Equib Val: ");
       lcdPrint(equibFlag, eValFlag); //display equib psi
       airEqualize(off);
       delay(3000); //time to see value

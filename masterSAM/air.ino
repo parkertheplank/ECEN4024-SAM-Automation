@@ -26,8 +26,7 @@ float airRead()
 {
   int16_t adc0 = ads.readADC_SingleEnded(0);
   volts0 = adc0 * .0001875;
-  return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+
-         (.8268*pow(volts0,2))  +(14.2527*volts0)     -14.8514;
+  return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+(.8268*pow(volts0,2))+(14.2527*volts0)-14.8514;
 }
 
 void delayAndUpdate(int updates, int delay_ms)
@@ -35,7 +34,7 @@ void delayAndUpdate(int updates, int delay_ms)
   for (int n=0; n < updates;n++)
   {
       airAverage();
-      serialPrintAll("Updating: ");
+      sPrint("Updating: ");
       delay(delay_ms/updates);
   }
 }
@@ -60,7 +59,7 @@ void airBleed()
   
   while (psi_avg > targ){
     airAverage();
-    serialPrintAll("Bleeding: ");
+    sPrint("Bleeding: ");
   }
   digitalWrite(airBleeder,on); //close bleeder
 } 
