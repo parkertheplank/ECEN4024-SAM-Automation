@@ -2,6 +2,8 @@ void uiSetup(){
   Serial.begin(9600);
   Serial.println("-----START-------");
   pinMode(sBut, INPUT);
+  pinMode(vBut, INPUT);
+  attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
   attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
   lcd.begin(16, 2);
   lcdPrint(manFlag, manFlag);

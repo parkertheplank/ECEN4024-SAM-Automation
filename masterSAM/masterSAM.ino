@@ -10,7 +10,7 @@ const int waterPump = 33,waterValveIn = 50,waterValveOut = 52;       //Water
 const int airValve = 46,airBleeder = 32,airPump = 31,airLever  = 48; //Air
 const int vib = 30,tilt1 = 51,tilt2 = 53;                            //Mechanical                                                                                
 const int rs = 12,en = 11,d4 = 10,d5 = 9,d6 = 8,d7 = 7;              //LCD    
-const int sda = 20,scl = 21,sBut = 3;                                //Comm and Button                     
+const int sda = 20,scl = 21, sBut = 3 ,vBut = 2 ;                    //Comm and Button                     
 //Other
 const int manFlag  = 1, waterFlag = 2, pressFlag = 3, bleedFlag = 4, equibFlag = 5; //LCD Status flags
 const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9;
@@ -20,6 +20,7 @@ const int on = LOW, off = HIGH;   //for inverted relays
 Adafruit_ADS1115 ads;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 bool start = false;                       //track whether main test has started
+bool vibrating = false;                   //track whether vibrate button is pressed
 float targ, calib, volts0;                //target psi, calibration offset, and adc volts respectively
 float pVals[5], eVals[5], samVal, airVol; //Overall output Data
 float psi[len], psi_avg;                  //running average array and average
@@ -43,20 +44,21 @@ void loop()
     testing(); 
     start = false;
   }
-  delayAndUpdate(50,5000);
-  Serial.println("\n____________ON_____________");
-  digitalWrite(waterValveOut,on);
-  delayAndUpdate(50,5000);
-  digitalWrite(waterValveOut,off);
-  Serial.println("\n____________OFF_____________");
+  if(vibrating)
+  {
+    vibrate(on);
+    
+  }
 } 
 
 void testing()
 {
-   airPressurize();
-   while (psi_avg < 30) {airAverage(); delay(100); sPrint("Pressurizing: ");}
-   airHalt();
-   digitalWrite(airBleeder,off);
+   lcdPrint(waterFlag);
+   delay(4000);
+   lcdPrint(pressFlag);
+   delay(4000);
+   lcdPrint(equibFlag, eValFlag);\
+   delay(4000);
 }
 
 void mainSAM(){
