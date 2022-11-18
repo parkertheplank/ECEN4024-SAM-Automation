@@ -9,8 +9,8 @@
 const int waterPump = 33,waterValveIn = 50,waterValveOut = 52;       //Water
 const int airValve = 46,airBleeder = 32,airPump = 31,airLever  = 48; //Air
 const int vib = 30,tilt1 = 51,tilt2 = 53;                            //Mechanical                                                                                
-const int rs = 12,en = 11,d4 = 10,d5 = 9,d6 = 8,d7 = 7;              //LCD    
-const int sda = 20,scl = 21, sBut = 3 ,vBut = 2 ;                    //Comm and Button                     
+const int rs = 8,en = 2,d4 = 4,d5 = 5,d6 = 6,d7 = 7;                 //LCD    
+const int sda = 20,scl = 21, sBut = 3 ,vBut = 18 ;                   //Comm and Button                     
 //Other
 const int manFlag  = 1, waterFlag = 2, pressFlag = 3, bleedFlag = 4, equibFlag = 5; //LCD Status flags
 const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9;
@@ -40,6 +40,7 @@ void start_test(){start = true;} //ISR for buttons
 void start_vib(){vibrating = true;}
 void loop() 
 { 
+  testing();
   if(start)
   { 
     testing(); 
