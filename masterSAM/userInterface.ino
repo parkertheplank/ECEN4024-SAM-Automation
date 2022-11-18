@@ -4,7 +4,7 @@ void uiSetup(){
   pinMode(sBut, INPUT);
   pinMode(vBut, INPUT);
   attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
-  attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
+  attachInterrupt(digitalPinToInterrupt(vBut), start_test, HIGH);   //interupt for start button
   lcd.begin(16, 2);
   lcdPrint(manFlag, manFlag);
 }

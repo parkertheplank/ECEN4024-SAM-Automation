@@ -37,6 +37,7 @@ void setup()
 }
 
 void start_test(){start = true;} //ISR for buttons
+void start_vib(){vibrating = true;}
 void loop() 
 { 
   if(start)
@@ -47,7 +48,9 @@ void loop()
   if(vibrating)
   {
     vibrate(on);
-    
+    delay(2000);
+    vibrate(off);
+    vibrating = false;
   }
 } 
 
