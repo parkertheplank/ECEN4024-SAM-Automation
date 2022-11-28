@@ -1,6 +1,6 @@
 void airSetup()
 {
-   if (!ads.begin()) {
+   if (!ads.begin()) { //default address 0x48
     Serial.println("Failed to initialize ADS.");
     while (1);
    }

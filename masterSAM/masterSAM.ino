@@ -3,14 +3,14 @@
 
 //-----------------SETUP------------------------------
 #include <Adafruit_ADS1X15.h> 
-#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h> //https://github.com/johnrickman/LiquidCrystal_I2C
+#include <Wire.h>
 //----------------CONSTANTS-------------------------------
 //Pins
-const int waterPump = 33,waterValveIn = 50,waterValveOut = 52;       //Water
-const int airValve = 46,airBleeder = 32,airPump = 31,airLever  = 48; //Air
-const int vib = 30,tilt1 = 51,tilt2 = 53;                            //Mechanical                                                                                
-const int rs = 8,en = 2,d4 = 4,d5 = 5,d6 = 6,d7 = 7;                 //LCD    
-const int sda = 20,scl = 21, sBut = 3 ,vBut = 18 ;                   //Comm and Button                     
+const int waterPump = 33, waterValveIn = 50, waterValveOut = 52;       //Water
+const int airValve = 46, airBleeder = 32, airPump = 31, airLever  = 48; //Air
+const int vib = 30, tilt1 = 51, tilt2 = 53;                            //Mechanical                                                                                 
+const int sBut = 3, vBut = 18 ;                   //Comm and Button                     
 //Other
 const int manFlag  = 1, waterFlag = 2, pressFlag = 3, bleedFlag = 4, equibFlag = 5; //LCD Status flags
 const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9;
@@ -18,7 +18,7 @@ const int len = 5;                //running average array length
 const int on = LOW, off = HIGH;   //for inverted relays
 //----------------GLOBAL VARS----------------------------
 Adafruit_ADS1115 ads;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27,20,4);
 bool start = false;                       //track whether main test has started
 bool vibrating = false;                   //track whether vibrate button is pressed
 float targ, calib, volts0;                //target psi, calibration offset, and adc volts respectively
@@ -38,9 +38,9 @@ void setup()
 
 void start_test(){start = true;} //ISR for buttons
 void start_vib(){vibrating = true;}
+
 void loop() 
 { 
-  testing();
   if(start)
   { 
     testing(); 
@@ -57,12 +57,49 @@ void loop()
 
 void testing()
 {
-   lcdPrint(waterFlag);
+  digitalWrite(airValve, on); 
+    Serial.println("air valve");
    delay(4000);
-   lcdPrint(pressFlag);
+   digitalWrite(airValve, off);
+  /*
+   Serial.println("tilt up");
+   tilt(on);
    delay(4000);
-   lcdPrint(equibFlag, eValFlag);\
+   Serial.println("tilt down");
+   tilt(off);
+   digitalWrite(waterValveIn, on);
+   Serial.println("water in");
    delay(4000);
+   digitalWrite(waterValveIn, off);
+   digitalWrite(waterValveOut, on);
+    Serial.println("water out");
+   delay(4000);
+   digitalWrite(waterValveOut, off);
+   digitalWrite(waterPump, on);
+    Serial.println("h20 pump");
+   delay(4000);
+   digitalWrite(waterPump, off);
+   digitalWrite(airBleeder, on); 
+    Serial.println("beed");
+   delay(4000);
+   digitalWrite(airBleeder, off);
+   digitalWrite(airValve, on); 
+    Serial.println("air valve");
+   delay(4000);
+   digitalWrite(airValve, off); 
+   digitalWrite(airPump, on); 
+    Serial.println("pump air");
+   delay(4000);
+   digitalWrite(airPump, off); 
+   digitalWrite(airLever, on);
+    Serial.println("lever");
+   delay(4000);
+   digitalWrite(airLever, off);
+   */
+ //bleeding on. 
+   
+  
+   
 }
 
 void mainSAM(){

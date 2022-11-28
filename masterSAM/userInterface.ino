@@ -4,8 +4,9 @@ void uiSetup(){
   pinMode(sBut, INPUT);
   pinMode(vBut, INPUT);
   attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
-  attachInterrupt(digitalPinToInterrupt(vBut), start_test, HIGH);   //interupt for start button
-  lcd.begin(16, 2);
+  attachInterrupt(digitalPinToInterrupt(vBut), start_vib, HIGH);   //interupt for start button
+  lcd.init();
+  lcd.backlight();
   lcdPrint(manFlag, manFlag);
 }
 
@@ -22,31 +23,35 @@ void sPrint(String phase)
 
 void lcdPrint(int state, int dataState = noDatFlag)
 {
-  String line1;
-  String line2;
+  String line[3];
 
+  line[0]="--Super-Air-Meter---";
   switch (state)
   {
-    case manFlag:       line1 = "Prepare SAM"; break;
-    case bleedFlag:     line1 = "Bleeding Air"; break;
-    case waterFlag:     line1= "Water Pumping"; break;
-    case pressFlag:     line1 = "Pressurizing"; break;
-    case equibFlag:     line1 = "Equalizing"; break;
+    case manFlag:       line[1] = "Prepare SAM"; break;
+    case bleedFlag:     line[1] = "Bleeding Air"; break;
+    case waterFlag:     line[1]= "Water Pumping"; break;
+    case pressFlag:     line[1] = "Pressurizing"; break;
+    case equibFlag:     line[1] = "Equalizing"; break;
   }
-
   switch (dataState)
   {
-    case manFlag:       line2 ="Then Press Start"; break;
-    case pValFlag:      line2 = "Before:" + String(eVals[(i*3)+j],2); break;
-    case eValFlag:      line2 = "After:" + String(pVals[(i*3)+j],2); break;
-    case usbFlag:       line2 = "Insert Flashdrive"; break;
-    case noDatFlag:             line2 = ""; break;
+    case manFlag:       line[2] = "Then Press Start"; break;
+    case pValFlag:      line[2] = "Top PSI:" + String(eVals[(i*3)+j],2); break;
+    case eValFlag:      line[2] = "Equib PSI:" + String(pVals[(i*3)+j],2); break;
+    case usbFlag:       line[2] = "Insert SD card"; break;
+    case noDatFlag:     line[2] = "         "; break;
   }
-
+  line[3]= "-----------------";
+  
   lcd.clear();
-  lcd.print(line1); 
+  lcd.print(line[0]); 
   lcd.setCursor(0,1);
-  lcd.print(line2);
+  lcd.print(line[1]); 
+  lcd.setCursor(0,2);
+  lcd.print(line[2]);
+  //lcd.setCursor(0,3);
+  //lcd.print(line[3]); //perhaps could use fourth line to display target psi?
 }
 
 void usbWrite() 
