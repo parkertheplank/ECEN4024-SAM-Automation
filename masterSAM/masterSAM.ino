@@ -9,14 +9,13 @@
 //----------------CONSTANTS-------------------------------
 //Pins
 const int waterPump = 33, waterValveIn = 50, waterValveOut = 52;       //Water
-const int airValve = 46, airBleeder = 32, airPump = 31, airLever  = 48; //Air
-const int vib = 30, tilt1 = 51, tilt2 = 53;                            //Mechanical                                                                                 
-const int sBut = 3, vBut = 18 ;                   //Comm and Button                     
+const int airValve = 46, airBleeder = 32, airPump = 31, airLever  = 48;//Air
+const int vib = 30, tilt1 = 51, tilt2 = 53, sBut = 3, vBut = 18 ;      //Mechanical and Buttons                                                                                                
 //Other
 const int manFlag  = 1, waterFlag = 2, pressFlag = 3, bleedFlag = 4, equibFlag = 5; //LCD Status flags
 const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9;
-const int len = 5;                //running average array length
 const int on = LOW, off = HIGH;   //for inverted relays
+const int len = 5;                //running average array length
 //----------------GLOBAL VARS----------------------------
 Adafruit_ADS1115 ads;
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27,20,4);
@@ -45,7 +44,7 @@ void loop()
 { 
   if(start)
   { 
-    testing(); 
+    airCalib(); 
     start = false;
   }
   if(vibrating)
@@ -56,37 +55,6 @@ void loop()
     vibrating = false;
   }
 } 
-
-void testing()
-{
-  digitalWrite(airValve, on); 
-    Serial.println("air valve");
-   delay(4000);
-   digitalWrite(airValve, off);
-}
-
-void waterTest()
-{
-  waterFill(0);
-  digitalWrite(tilt1, on);
-  digitalWrite(tilt2, off);  
-  delay(2000); //roughly 30 degrees
-  digitalWrite(tilt1, off); 
-  for(int i=0; i<10; i++)
-  {
-    digitalWrite(tilt1, on);
-    digitalWrite(tilt2, off);  
-    delay(500); //roughly 30 degrees
-    digitalWrite(tilt1, off); 
-    Serial.println(i);
-    delay(4000);
-  }
-  //return to start position
-  digitalWrite(tilt1, off);
-  digitalWrite(tilt2, on);  
-  delay(8000); //roughly 30 degrees
-  digitalWrite(tilt2, off); 
-}
 
 void mainSAM(){
 //-----------------FINAL PROCESS-------------------------------

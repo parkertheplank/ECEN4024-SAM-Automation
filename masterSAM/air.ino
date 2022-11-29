@@ -26,7 +26,10 @@ float airRead()
 {
   int16_t adc0 = ads.readADC_SingleEnded(0);
   volts0 = adc0 * .0001875;
-  return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+(.8268*pow(volts0,2))+(14.2527*volts0)-14.8514;
+  //return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+(.8268*pow(volts0,2))+(14.2527*volts0)-14.8514; //60 data points
+  //return (-0.0014*pow(volts0,5))+(0.0140*pow(volts0,4))+(-0.0404*pow(volts0,3))+(-0.0049*pow(volts0,2))+(15.1391*volts0)-15.1497; //100 data points
+  return (0.0022*pow(volts0,6))+(-0.0400*pow(volts0,5))+(0.2898*pow(volts0,4))+(-1.0442*pow(volts0,3))+(1.9512*pow(volts0,2))+(13.2158*volts0)-14.4094; //100 data points
+  //return //100 data points
 }
 
 void delayAndUpdate(int updates, int delay_ms)
