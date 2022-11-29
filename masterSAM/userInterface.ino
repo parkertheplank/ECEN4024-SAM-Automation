@@ -58,7 +58,6 @@ void sdWrite(int val)
 {
   pinMode(10, OUTPUT);
   myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
-  lcdPrint(manFlag, manFlag);
   
   if (myFile) {
     myFile.println(val);
