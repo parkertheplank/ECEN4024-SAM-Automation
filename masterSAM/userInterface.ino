@@ -54,7 +54,19 @@ void lcdPrint(int state, int dataState = noDatFlag)
   //lcd.print(line[3]); //perhaps could use fourth line to display target psi?
 }
 
-void usbWrite() 
+void sdWrite(int val) 
 {
-
+  pinMode(10, OUTPUT);
+  myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
+  lcdPrint(manFlag, manFlag);
+  
+  if (myFile) {
+    myFile.println(val);
+	// close the file:
+    myFile.close();
+  } 
+  else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening SAM_RESULTS.txt");
+  }
 } 
