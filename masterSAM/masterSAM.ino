@@ -25,7 +25,6 @@ float targ, calib, volts0;                //target psi, calibration offset, and 
 float pVals[5], eVals[5], samVal, airVol; //Overall output Data
 float psi[len], psi_avg;                  //running average array and average
 int i, j, tail = 0;                       //loop indexes and running average index
-File myFile;                              //file is created and can be written to
 
 void lcdPrint(int state,int dataState = noDatFlag);
 
@@ -110,5 +109,13 @@ void mainSAM(){
  
   samVal = (eVals[0]+eVals[1]+eVals[2])-(eVals[3]+eVals[4]+eVals[5]); //calculate SAM num
   lcdPrint(manFlag, manFlag);
+  //writes all values to sd card
+  sdWrite(evals[0]);
+  sdWrite(evals[1]);
+  sdWrite(evals[2]);
+  sdWrite(evals[3]);
+  sdWrite(evals[4]);
+  sdWrite(evals[5]);
   sdWrite(samVal);
+  sdClose();
 }
