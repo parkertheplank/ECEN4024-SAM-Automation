@@ -5,9 +5,13 @@ void uiSetup(){
   pinMode(vBut, INPUT);
   attachInterrupt(digitalPinToInterrupt(sBut), start_test, HIGH);   //interupt for start button
   attachInterrupt(digitalPinToInterrupt(vBut), start_vib, HIGH);   //interupt for start button
+  //lcd setup
   lcd.init();
   lcd.backlight();
   lcdPrint(manFlag, manFlag);
+  //sd stuff	
+  pinMode(10, OUTPUT);
+  myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
 }
 
 void sPrint(String phase)
@@ -56,16 +60,15 @@ void lcdPrint(int state, int dataState = noDatFlag)
 
 void sdWrite(int val) 
 {
-  pinMode(10, OUTPUT);
-  myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
-  
   if (myFile) {
     myFile.println(val);
-	// close the file:
-    myFile.close();
   } 
   else {
     // if the file didn't open, print an error:
     Serial.println("error opening SAM_RESULTS.txt");
   }
+	
+void sdClose()
+{
+  myFile.close();
 } 
