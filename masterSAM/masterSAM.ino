@@ -39,7 +39,7 @@ void setup()
 }
 
 void start_test(){start = true;} //ISR for buttons
-void start_vib(){vibrating = true;}
+void start_vib(){ Serial.println("<--->");}//vibrating = true;}
 
 void loop() 
 { 
@@ -63,45 +63,29 @@ void testing()
     Serial.println("air valve");
    delay(4000);
    digitalWrite(airValve, off);
-  /*
-   Serial.println("tilt up");
-   tilt(on);
-   delay(4000);
-   Serial.println("tilt down");
-   tilt(off);
-   digitalWrite(waterValveIn, on);
-   Serial.println("water in");
-   delay(4000);
-   digitalWrite(waterValveIn, off);
-   digitalWrite(waterValveOut, on);
-    Serial.println("water out");
-   delay(4000);
-   digitalWrite(waterValveOut, off);
-   digitalWrite(waterPump, on);
-    Serial.println("h20 pump");
-   delay(4000);
-   digitalWrite(waterPump, off);
-   digitalWrite(airBleeder, on); 
-    Serial.println("beed");
-   delay(4000);
-   digitalWrite(airBleeder, off);
-   digitalWrite(airValve, on); 
-    Serial.println("air valve");
-   delay(4000);
-   digitalWrite(airValve, off); 
-   digitalWrite(airPump, on); 
-    Serial.println("pump air");
-   delay(4000);
-   digitalWrite(airPump, off); 
-   digitalWrite(airLever, on);
-    Serial.println("lever");
-   delay(4000);
-   digitalWrite(airLever, off);
-   */
- //bleeding on. 
-   
-  
-   
+}
+
+void waterTest()
+{
+  waterFill(0);
+  digitalWrite(tilt1, on);
+  digitalWrite(tilt2, off);  
+  delay(2000); //roughly 30 degrees
+  digitalWrite(tilt1, off); 
+  for(int i=0; i<10; i++)
+  {
+    digitalWrite(tilt1, on);
+    digitalWrite(tilt2, off);  
+    delay(500); //roughly 30 degrees
+    digitalWrite(tilt1, off); 
+    Serial.println(i);
+    delay(4000);
+  }
+  //return to start position
+  digitalWrite(tilt1, off);
+  digitalWrite(tilt2, on);  
+  delay(8000); //roughly 30 degrees
+  digitalWrite(tilt2, off); 
 }
 
 void mainSAM(){
