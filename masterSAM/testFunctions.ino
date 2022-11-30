@@ -66,13 +66,13 @@ void waterTest()
 
 void airCalib()
 {
-      /*airPressurize(); 
+      airPressurize(); 
       while (psi_avg < 55) 
       {
          airAverage(); delay(100); 
          sPrint("Pressurizing: ");
       }
-      airHalt();*/
+      airHalt();
          digitalWrite(airBleeder, off); //bleeding on. 
       while(true)
       {
