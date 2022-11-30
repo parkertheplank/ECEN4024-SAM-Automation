@@ -25,17 +25,13 @@ void airSetup()
 float airRead()
 {
   int16_t adc0 = ads.readADC_SingleEnded(0);
-  volts0 = adc0 * .0001875;
-  //return (-0.0066*pow(volts0,5))+(.0837*pow(volts0,4))+(-.3928*pow(volts0,3))+(.8268*pow(volts0,2))+(14.2527*volts0)-14.8514; //60 data points
-  //return (-0.0014*pow(volts0,5))+(0.0140*pow(volts0,4))+(-0.0404*pow(volts0,3))+(-0.0049*pow(volts0,2))+(15.1391*volts0)-15.1497; //100 data points
-  //return (0.0022*pow(volts0,6))+(-0.0400*pow(volts0,5))+(0.2898*pow(volts0,4))+(-1.0442*pow(volts0,3))+(1.9512*pow(volts0,2))+(13.2158*volts0)-14.4094; //100 data points
-  //return //100 data points
-  if(volts<=2.5) //1-2.5V 22.5psi
-    return (14.9696*volts0)-14.9433;
-  else if(volts<=3.5) //2.5-3.5V 37.5psi
-    return (14.9904*volts0)-15.0356;
-  else //3.5-5V
-    return (15.0025*volts0)-15.0379;
+  volts = adc0 * .0001875;
+  if (volts <= 2.5) //0-22.5 psi
+    return (14.9848*volts)-15.0104+.041;
+  else if (volts <= 3.5) //22.5-37.5psi
+    return (14.9848*volts)-15.0104+.015;
+  else //37.5-60psi
+    return (14.9848*volts)-15.0104+.033;
 }
 
 void delayAndUpdate(int updates, int delay_ms)
@@ -65,12 +61,21 @@ void airAverage()
 void airBleed()
 {
   digitalWrite(airBleeder,off); //bleed air
+  bool done = false;
   
-  while (psi_avg > targ){
+  while (!done){
     airAverage();
     sPrint("Bleeding: ");
+    if(psi_avg <= targ +.01)
+    {
+      digitalWrite(airBleeder,on); //close bleeder
+      delayAndUpdate(50, 2000);
+      if(psi_avg <= targ + .02)
+        done=true;
+      else
+        digitalWrite(airBleeder,off); //bleed air
+    }
   }
-  digitalWrite(airBleeder,on); //close bleeder
 } 
 
 void airPressurize()
