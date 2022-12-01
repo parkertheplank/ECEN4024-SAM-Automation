@@ -41,6 +41,12 @@ void airTest()
 
 void waterTest()
 {
+  waterFill(0);
+  delay(1000);
+  waterClose();
+}
+void waterTiltTest()
+{
   waterFill(1);
   digitalWrite(tilt1, on);
   digitalWrite(tilt2, off);  

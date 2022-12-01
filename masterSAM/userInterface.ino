@@ -65,33 +65,24 @@ void lcdPSI()
 
 void sdWrite() 
 {
-  pinMode(10, OUTPUT);
-<<<<<<< HEAD
-  myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
-  if (myFile) {
-    myFile.println(val);
-=======
-  if (SD.exists("SAM_RESULTS.txt")) 
+  pinMode(10, OUTPUT); 
+  if (!SD.exists("SAM_RESULTS.csv")) 
   {
-	myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);  
-	myfile.println(" ");
-	myFile.println("Pre-punch Values: ", pVals[0], ", ", pVals[1], ", ", pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
-	myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
-	myFile.println("SAM Number: ", samVal); //sam num
-	myFile.println("Air Volume: ", airVol); //air volume
-	myFile.close();
+	myFile = SD.open("SAM_RESULTS.csv", FILE_WRITE);  
+	myFile.println("SAM Num, Air Vol, pVal[0], pVal[1], pVal[2], pVal[3], pVal[4], pVal[5], eVal[0], eVal[1], eVal[2], eVal[3], eVal[4], eVal[5]");
   }
   else
   {
-    myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
-  
-    if (myFile) 
-    {
-      myFile.println("Pre-punch Values: ", pVals[0], ", ", pVals[1], ", ", pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
-      myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
-      myFile.println("SAM Number: ", samVal); //sam num
-      myFile.println("Air Volume: ", airVol); //air volume
->>>>>>> a27fcc951594aee6b1f2ae6d9c460dbfd1cda2c3
+  myFile = SD.open("SAM_RESULTS.csv", FILE_WRITE);
+  }
+  String data = String(samVal,2) + "," + String(airVol,2) + "," + String(pVal[0],2) + "," + String(pVal[1],2) + "," + String(pVal[2],2) + "," + String(pVal[3],2) + "," +
+                String(pVal[4],2) + "," + String(pVal[5],2) + "," + String(eVal[0],2) + "," + String(eVal[1],2) + "," + String(eVal[2],2) + "," + String(eVal[3],2) + "," +
+                String(eVal[4],2) + "," + String(eVal[5],2);
+      myFile.println(data); //prints out all the data
+      //myFile.println("Pre-punch Values: " + pVals[0] + ", " + pVals[1], ", " + pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
+      //myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
+      //myFile.println("SAM Number: ", samVal); //sam num
+      //myFile.println("Air Volume: ", airVol); //air volume
 	// close the file:
       myFile.close();
     } 

@@ -115,8 +115,6 @@ void mainSAM(){
       delay(3000); //time to see value
     }
   }
- 
-<<<<<<< HEAD
   samVal = (eVal[0]+eVal[1]+eVal[2])-(eVal[3]+eVal[4]+eVal[5]); //calculate SAM num
   //sdWrite(samVal);
 
@@ -129,9 +127,4 @@ void mainSAM(){
   
   vibrating = false; //necessary due to vBut interrupt being triggered by tilt relays
   lcdPrint(manFlag, manFlag);
-=======
-  samVal = (eVals[0]+eVals[1]+eVals[2])-(eVals[3]+eVals[4]+eVals[5]); //calculate SAM num
-  //lcdPrint(manFlag, manFlag);
-  //sdWrite();
->>>>>>> a27fcc951594aee6b1f2ae6d9c460dbfd1cda2c3
 }
