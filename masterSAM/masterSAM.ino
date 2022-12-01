@@ -195,5 +195,5 @@ void mainSAM(){
  
   samVal = (eVals[0]+eVals[1]+eVals[2])-(eVals[3]+eVals[4]+eVals[5]); //calculate SAM num
   //lcdPrint(manFlag, manFlag);
-  //sdWrite(samVal);
+  //sdWrite();
 }
