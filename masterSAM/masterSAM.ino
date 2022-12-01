@@ -35,17 +35,16 @@ void setup()
   airSetup();
   waterSetup();
   mechSetup();
-
 }
 
 void start_test(){start = true;} //ISR for buttons
-void start_vib(){ Serial.println("<--->");}//vibrating = true;}
+void start_vib() {}//vibrating = true;}
 
 void loop() 
-{ 
+{
   if(start)
   { 
-    testing(); 
+    waterTest(); 
     start = false;
   }
   if(vibrating)
@@ -82,27 +81,28 @@ void testing()
 
 void waterTest()
 {
-  waterFill(0);
+  waterFill(1);
   digitalWrite(tilt1, on);
   digitalWrite(tilt2, off);  
-  delay(2000); //roughly 30 degrees
+  delay(2000); 
   digitalWrite(tilt1, off); 
-  for(int i=0; i<10; i++)
+  for (int n = 0; n<18; n++)
   {
     digitalWrite(tilt1, on);
     digitalWrite(tilt2, off);  
-    delay(500); //roughly 30 degrees
+    delay(500); 
     digitalWrite(tilt1, off); 
-    Serial.println(i);
-    delay(4000);
+    Serial.println(n);
+    delay(5000);
   }
+  vibrating = false;
   //return to start position
   digitalWrite(tilt1, off);
   digitalWrite(tilt2, on);  
-  delay(8000); //roughly 30 degrees
+  delay(11000); 
   digitalWrite(tilt2, off); 
   waterClose();
-
+  delay(2000);
   lcdPrint(pressFlag);
   j=0;
   targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
@@ -124,7 +124,7 @@ void waterTest()
   sPrint("Pre-Punch Val: ");
   
 //----------------AIR PUNCH AND VIBRATE-----------------------
-  lcdPrint(equibFlag, pValFlag); //display pre punch psi
+  //lcdPrint(equibFlag, pValFlag); //display pre punch psi
   airEqualize(on);
   for(int k=0;k<3;k++){
     vibrate(on);
@@ -136,7 +136,7 @@ void waterTest()
   delayAndUpdate(100, 3000);
   eVals[(3*i)+j] = psi_avg; //record equib psi
   sPrint("Equib Val: ");
-  lcdPrint(equibFlag, eValFlag); //display equib psi
+  //lcdPrint(equibFlag, eValFlag); //display equib psi
   airEqualize(off);
   delay(3000); //time to see value
 }
