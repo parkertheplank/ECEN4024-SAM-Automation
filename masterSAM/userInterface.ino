@@ -54,7 +54,7 @@ void lcdPrint(int state, int dataState = noDatFlag)
   //lcd.print(line[3]); //perhaps could use fourth line to display target psi?
 }
 
-void sdWrite(int val) 
+void sdWrite() 
 {
   pinMode(10, OUTPUT);
   if (SD.exists("SAM_RESULTS.txt")) 
