@@ -63,17 +63,42 @@ void lcdPSI()
   lcd.print(line[3]); 
 }
 
-void sdWrite(int val) 
+void sdWrite() 
 {
   pinMode(10, OUTPUT);
+<<<<<<< HEAD
   myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
   if (myFile) {
     myFile.println(val);
+=======
+  if (SD.exists("SAM_RESULTS.txt")) 
+  {
+	myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);  
+	myfile.println(" ");
+	myFile.println("Pre-punch Values: ", pVals[0], ", ", pVals[1], ", ", pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
+	myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
+	myFile.println("SAM Number: ", samVal); //sam num
+	myFile.println("Air Volume: ", airVol); //air volume
+	myFile.close();
+  }
+  else
+  {
+    myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);
+  
+    if (myFile) 
+    {
+      myFile.println("Pre-punch Values: ", pVals[0], ", ", pVals[1], ", ", pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
+      myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
+      myFile.println("SAM Number: ", samVal); //sam num
+      myFile.println("Air Volume: ", airVol); //air volume
+>>>>>>> a27fcc951594aee6b1f2ae6d9c460dbfd1cda2c3
 	// close the file:
-    myFile.close();
-  } 
-  else {
+      myFile.close();
+    } 
+    else 
+    {
     // if the file didn't open, print an error:
     Serial.println("error opening SAM_RESULTS.txt");
+    }
   }
 } 
