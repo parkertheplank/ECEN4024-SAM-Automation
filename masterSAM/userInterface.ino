@@ -61,8 +61,8 @@ void sdWrite()
   {
 	myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE);  
 	myfile.println(" ");
-	myFile.println("Pre-punch Values: ", pVals[0], pVals[1], pVals[2], pVals[3], pVals[4], pVals[5]); //prepunch vals
-	myFile.println("Equilibrium Values: ", eVals[0], eVals[1], eVals[2], eVals[3], eVals[4], eVals[5]); //equib vals
+	myFile.println("Pre-punch Values: ", pVals[0], ", ", pVals[1], ", ", pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
+	myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
 	myFile.println("SAM Number: ", samVal); //sam num
 	myFile.println("Air Volume: ", airVol); //air volume
 	myFile.close();
@@ -73,8 +73,8 @@ void sdWrite()
   
     if (myFile) 
     {
-      myFile.println("Pre-punch Values: ", pVals[0], pVals[1], pVals[2], pVals[3], pVals[4], pVals[5]); //prepunch vals
-      myFile.println("Equilibrium Values: ", eVals[0], eVals[1], eVals[2], eVals[3], eVals[4], eVals[5]); //equib vals
+      myFile.println("Pre-punch Values: ", pVals[0], ", ", pVals[1], ", ", pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
+      myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
       myFile.println("SAM Number: ", samVal); //sam num
       myFile.println("Air Volume: ", airVol); //air volume
 	// close the file:
