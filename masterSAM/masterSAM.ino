@@ -5,7 +5,8 @@
 #include <Adafruit_ADS1X15.h> 
 #include <LiquidCrystal_I2C.h> //https://github.com/johnrickman/LiquidCrystal_I2C
 #include <Wire.h>
-#include <SD.h>
+//#include <SPI.h>
+//#include <SD.h>
 //----------------CONSTANTS-------------------------------
 //Pins
 const int waterPump = 33, waterValveIn = 50, waterValveOut = 52;       //Water
@@ -25,7 +26,7 @@ float targ, volts;                //target psi, calibration offset, and adc volt
 float pVal[5], eVal[5], samVal, airVol; //Overall output Data
 float psi[len], psi_avg;                  //running average array and average
 int i, j, tail = 0;                       //loop indexes and running average index
-File myFile;                              //file is created and can be written to
+//File myFile;                              //file is created and can be written to
 String line[3];
 void lcdPrint(int state,int dataState = noDatFlag);
 
@@ -44,7 +45,7 @@ void loop()
 {
   if(start)
   { 
-    mainSAM(); 
+    lcdTest();//mainSAM(); 
     start = false;
   }
   if(vibrating)

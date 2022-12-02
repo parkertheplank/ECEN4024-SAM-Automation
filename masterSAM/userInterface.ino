@@ -1,5 +1,6 @@
 void uiSetup(){
   Serial.begin(9600);
+  delay(3000);
   Serial.println("-----START-------");
   pinMode(sBut, INPUT);
   pinMode(vBut, INPUT);
@@ -8,7 +9,7 @@ void uiSetup(){
   lcd.init();
   lcd.backlight();
   line[0]="  Super Air Meter";
-  lcdPrint(manFlag, manFlag);
+  //lcdPrint(manFlag, manFlag);
 }
 
 void sPrint(String phase)
@@ -38,18 +39,18 @@ void lcdPrint(int state, int dataState)
     case manFlag:       line[2] = "  Then Press Start"; break;
     case pValFlag:      line[2] = "   Top PSI: " + String(pVal[(i*3)+j],2); break;
     case eValFlag:      line[2] = "   Equib PSI: " + String(eVal[(i*3)+j],2); break;
-    case usbFlag:       line[2] = "   Insert SD card"; break;
+    case usbFlag:       line[2] = "   Insert SD Card"; break;
     case noDatFlag:     line[2] = " "; break;
   }
   if (state == manFlag || state == waterFlag)
     line[3] = " ";
   else
     line[3]= "     PSI: " + String(psi_avg,2);
-  
+
   lcd.clear();
   lcd.print(line[0]); 
   lcd.setCursor(0,1);
-  lcd.print(line[1]); 
+  lcd.print(line[1]);
   lcd.setCursor(0,2);
   lcd.print(line[2]);
   lcd.setCursor(0,3);
@@ -63,9 +64,9 @@ void lcdPSI()
   lcd.print(line[3]); 
 }
 
+/*
 void sdWrite() 
-{
-  pinMode(10, OUTPUT); 
+{ 
   if (!SD.exists("SAM_RESULTS.csv")) 
   {
 	myFile = SD.open("SAM_RESULTS.csv", FILE_WRITE);  
@@ -75,21 +76,10 @@ void sdWrite()
   {
   myFile = SD.open("SAM_RESULTS.csv", FILE_WRITE);
   }
-  String data = String(samVal,2) + "," + String(airVol,2) + "," + String(pVal[0],2) + "," + String(pVal[1],2) + "," + String(pVal[2],2) + "," + String(pVal[3],2) + "," +
-                String(pVal[4],2) + "," + String(pVal[5],2) + "," + String(eVal[0],2) + "," + String(eVal[1],2) + "," + String(eVal[2],2) + "," + String(eVal[3],2) + "," +
-                String(eVal[4],2) + "," + String(eVal[5],2);
-      myFile.println(data); //prints out all the data
-      //myFile.println("Pre-punch Values: " + pVals[0] + ", " + pVals[1], ", " + pVals[2], ", ", pVals[3], ", ", pVals[4], ", ", pVals[5]); //prepunch vals
-      //myFile.println("Equilibrium Values: ", eVals[0], ", ", eVals[1], ", ", eVals[2], ", ", eVals[3], ", ", eVals[4], ", ", eVals[5]); //equib vals
-      //myFile.println("SAM Number: ", samVal); //sam num
-      //myFile.println("Air Volume: ", airVol); //air volume
-	// close the file:
-      myFile.close();
-    } 
-    else 
-    {
-    // if the file didn't open, print an error:
-    Serial.println("error opening SAM_RESULTS.txt");
-    }
-  }
+  String data = String(samVal,2) + ","  + String(airVol,2)  + "," + String(pVal[0],2) + "," + String(pVal[1],2) + "," + String(pVal[2],2) + "," + 
+                String(pVal[3],2) + "," + String(pVal[4],2) + "," + String(pVal[5],2) + "," + String(eVal[0],2) + "," + String(eVal[1],2) + "," + 
+                String(eVal[2],2) + "," + String(eVal[3],2) + "," + String(eVal[4],2) + "," + String(eVal[5],2);
+  myFile.println(data); //prints out all the data
+  myFile.close(); //close the file
 } 
+*/
