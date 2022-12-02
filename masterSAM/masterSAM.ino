@@ -22,7 +22,7 @@ LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27,20,4);
 bool start = false;                       //track whether main test has started
 bool vibrating = false;                   //track whether vibrate button is pressed
 float targ, volts;                //target psi, calibration offset, and adc volts respectively
-float pVal[5], eVal[5], samVal, airVol; //Overall output Data
+float pVal[6], eVal[6], samVal, airVol; //Overall output Data
 float psi[len], psi_avg;                  //running average array and average
 int i, j, tail = 0;                       //loop indexes and running average index
 File myFile;                              //file is created and can be written to
@@ -60,7 +60,8 @@ void loop()
 
 void mainSAM(){
 //-----------------FINAL PROCESS-------------------------------
-  for(i=0; i<2; i++){
+  for(i=0; i<2; i++)
+  {
 //-----------------WATER FILL UP-----------------------------
     lcdPrint(waterFlag);
     waterFill(i); //change to this when not testing. Shouldn't need to depressurize between uses. on second iteration i causes delay to depressurize
@@ -100,7 +101,8 @@ void mainSAM(){
 //----------------AIR PUNCH AND VIBRATE-----------------------
       lcdPrint(equibFlag, pValFlag); //display pre punch psi
       airEqualize(on);
-      for(int k=0;k<3;k++){
+      for(int k=0;k<3;k++)
+      {
         vibrate(on);
         delay(1000);
         vibrate(off);
@@ -117,13 +119,11 @@ void mainSAM(){
   }
   //calculate vals
   samVal = (eVal[0]+eVal[1]+eVal[2])-(eVal[3]+eVal[4]+eVal[5]); //calculate SAM num
-  airVol = ((376.0*pVal[0])/eVal[0])-376.0; //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal
+  airVol = ((376.0*pVal[2])/eVal[2])-376.0; //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal
   Serial.println("airVol: ");
-  Serial.print(airVol);
-  Serial.print("   pVal: ");
-  Serial.print(pVal[0]);
-  Serial.print("   eVal: ");
-  Serial.print(eVal[0]);
+  Serial.println(airVol);
+  Serial.println("samVal");
+  Serial.println(samVal);
   //sdWrite(samVal);
   lcdPrint(equibFlag, finalFlag);
   digitalWrite(airBleeder, off);
@@ -134,9 +134,8 @@ void mainSAM(){
   delay(5000);
   airEqualize(off);
   digitalWrite(waterValveOut, off);
-  delay(2000);
+  delay(7000);
   delayAndUpdate(50, 2000); //reset vals for next test
-   
   
   vibrating = false; //necessary due to vBut interrupt being triggered by tilt relays
   lcdPrint(manFlag, manFlag);
