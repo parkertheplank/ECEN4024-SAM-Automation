@@ -117,7 +117,13 @@ void mainSAM(){
   }
   //calculate vals
   samVal = (eVal[0]+eVal[1]+eVal[2])-(eVal[3]+eVal[4]+eVal[5]); //calculate SAM num
-  airVol = 6.66; //sam vol = 7664.91 cm^3 top chamber vol P1V1=P2V2
+  airVol = ((376.0*pVal[0])/eVal[0])-376.0; //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal
+  Serial.println("airVol: ");
+  Serial.print(airVol);
+  Serial.print("   pVal: ");
+  Serial.print(pVal[0]);
+  Serial.print("   eVal: ");
+  Serial.print(eVal[0]);
   //sdWrite(samVal);
   lcdPrint(equibFlag, finalFlag);
   digitalWrite(airBleeder, off);
@@ -128,6 +134,7 @@ void mainSAM(){
   delay(5000);
   airEqualize(off);
   digitalWrite(waterValveOut, off);
+  delay(2000);
   delayAndUpdate(50, 2000); //reset vals for next test
    
   

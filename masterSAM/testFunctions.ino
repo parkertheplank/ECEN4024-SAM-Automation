@@ -18,17 +18,23 @@ void lcdTest()
   //sdWrite(samVal);
   lcdPrint(equibFlag, finalFlag);
 }
-
+void waterRun()
+{
+  waterFill(0);
+  delay(10000);
+  waterClose();
+}
 void airTest()
 {
     lcdPrint(pressFlag);
-    j=1;
+    j=0;
     targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
     int calib = (j==0) ? .5 : ((j==1) ? .7 : 1.3);   //and calibration offset
     airPressurize(); 
     while (psi_avg < targ + calib) 
     {
        sPrint("Pressurizing: ");
+       lcdPSI();
        airAverage(); 
        delay(50); 
     }
