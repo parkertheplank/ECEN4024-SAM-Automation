@@ -1,14 +1,7 @@
-/*void sdTest()
-{
-  eVal[5] = {};
-  pVal[5] = {};
-  airVol = 69.96;
-  samVal = 6.66;
-  sdWrite();
-}*/
+
 void lcdTest()
 {
-  //lcdPrint(manFlag, manFlag);
+  lcdPrint(manFlag, manFlag);
   delay(2000);
   lcdPrint(bleedFlag);
   delay(2000);
@@ -20,30 +13,34 @@ void lcdTest()
   delay(2000);
   lcdPrint(equibFlag,eValFlag);
   delay(2000);
+  samVal = (eVal[0]+eVal[1]+eVal[2])-(eVal[3]+eVal[4]+eVal[5]); //calculate SAM num
+  airVol = 6.66; //sam vol = 7664.91 cm^3 top chamber vol P1V1=P2V2
+  //sdWrite(samVal);
+  lcdPrint(equibFlag, finalFlag);
 }
 
 void airTest()
 {
-  lcdPrint(pressFlag);
-  j=1;
-  targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
-  int calib = (j==0) ? 1 : ((j==1) ? 1 : 1);   //and calibration offset
-  airPressurize(); 
-  while (psi_avg < targ + calib) 
-  {
-     sPrint("Pressurizing: ");
-     airAverage(); 
-     delay(50); 
-  }
-  airHalt();
-  delayAndUpdate(100, 4000); //give time for psi to settle, update average
+    lcdPrint(pressFlag);
+    j=1;
+    targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
+    int calib = (j==0) ? .5 : ((j==1) ? .7 : 1.3);   //and calibration offset
+    airPressurize(); 
+    while (psi_avg < targ + calib) 
+    {
+       sPrint("Pressurizing: ");
+       airAverage(); 
+       delay(50); 
+    }
+    airHalt();
+    delayAndUpdate(100, 4000); //give time for psi to settle, update average
 
 //---------------------AIR BLEED---------------------------
-  lcdPrint(bleedFlag);
-  airBleed();
-  delayAndUpdate(200, 5000);
-  pVal[(3*i)+j] = psi_avg; //record pre-punch psi
-  sPrint("Pre-Punch Val: ");
+    lcdPrint(bleedFlag);
+    airBleed();
+    delayAndUpdate(200, 5000);
+    pVal[(3*i)+j] = psi_avg; //record pre-punch psi
+    sPrint("Pre-Punch Val: ");
 }
 
 void waterTest()

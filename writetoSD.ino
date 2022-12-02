@@ -10,13 +10,12 @@ void setup()
   // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
   // or the SD library functions will not work. 
    pinMode(10, OUTPUT); //required pin 10
-
-  /*
+ 
   if (!SD.begin(10)) { //if SD card not inserted
     Serial.println("initialization failed!"); //print it out to the LCD screen tho in the real code
     return;
   }
-  */
+ 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
   myFile = SD.open("SAM_RESULTS.txt", FILE_WRITE); //writes to output file

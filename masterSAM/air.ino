@@ -27,19 +27,21 @@ float airRead()
   int16_t adc0 = ads.readADC_SingleEnded(0);
   volts = adc0 * .0001875;
   if (volts <= 2.5) //0-22.5 psi
-    return (14.9848*volts)-15.0104+.041;
+    return (14.9848*volts)-15.0104+.141;
   else if (volts <= 3.5) //22.5-37.5psi
-    return (14.9848*volts)-15.0104+.015;
+    return (14.9848*volts)-15.0104+.115;
   else //37.5-60psi
-    return (14.9848*volts)-15.0104+.033;
+    return (14.9848*volts)-15.0104+.133;
 }
 
 void delayAndUpdate(int updates, int delay_ms)
 {
+  lcdPrint(balanFlag);
   for (int n=0; n < updates;n++)
   {
       airAverage();
       sPrint("Updating: ");
+      lcdPSI();
       delay(delay_ms/updates);
   }
 }
@@ -60,20 +62,30 @@ void airAverage()
 
 void airBleed()
 {
-  digitalWrite(airBleeder,off); //bleed air
   bool done = false;
+  float calib =(j==0) ? .03 : ((j==1) ? .03 : .04); //need wider tolerance for 45 psi
   
+  digitalWrite(airBleeder,off); //bleed air
   while (!done){
     airAverage();
+    
+    //Display data
     sPrint("Bleeding: ");
-    if(psi_avg <= targ +.01)
+    lcdPSI();
+    
+    if(psi_avg <= (targ + calib))
     {
       digitalWrite(airBleeder,on); //close bleeder
-      delayAndUpdate(50, 2000);
-      if(psi_avg <= targ + .02)
+      delayAndUpdate(50, 1000);
+      if(psi_avg <= (targ + calib))
+      {
         done=true;
+      }
       else
+      {
         digitalWrite(airBleeder,off); //bleed air
+        lcdPrint(bleedFlag);
+      }
     }
   }
 } 
