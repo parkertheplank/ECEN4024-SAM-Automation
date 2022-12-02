@@ -13,7 +13,7 @@ void tilt(int state)
 {
   digitalWrite(tilt1, state);
   digitalWrite(tilt2, !state);  
-  delay(9500); //Time derived by ten trial bubble tilt testing
+  delay(9500); //roughly 30 degrees
   digitalWrite(tilt1, off);
   digitalWrite(tilt2, off);  
 } 

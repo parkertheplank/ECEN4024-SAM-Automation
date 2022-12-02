@@ -36,12 +36,10 @@ float airRead()
 
 void delayAndUpdate(int updates, int delay_ms)
 {
-  lcdPrint(balanFlag);
   for (int n=0; n < updates;n++)
   {
       airAverage();
       sPrint("Updating: ");
-      lcdPSI();
       delay(delay_ms/updates);
   }
 }
@@ -62,22 +60,17 @@ void airAverage()
 
 void airBleed()
 {
-  bool done = false;
-  int calib = (j==2) ? .03 : .015; //need wider tolerance for 45 psi
-  
   digitalWrite(airBleeder,off); //bleed air
+  bool done = false;
+  
   while (!done){
     airAverage();
-    
-    //Display data
     sPrint("Bleeding: ");
-    lcdPSI();
-    
-    if(psi_avg <= targ + calib)
+    if(psi_avg <= targ +.01)
     {
       digitalWrite(airBleeder,on); //close bleeder
       delayAndUpdate(50, 2000);
-      if(psi_avg <= targ + calib)
+      if(psi_avg <= targ + .02)
         done=true;
       else
         digitalWrite(airBleeder,off); //bleed air

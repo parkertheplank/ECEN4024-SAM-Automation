@@ -14,15 +14,7 @@ void waterSetup()
 void waterFill(bool second) 
 {
   digitalWrite(waterValveOut, on);
-  if (second) //time depressurize after second interation
-  {
-    delay(4000);
-    airEqualize(on);
-    delay(3000);
-    delayAndUpdate(50, 2000);
-    airEqualize(off);
-    lcdPrint(waterFlag);
-  }
+  if (second){delay(3000);}//time depressurize after second interation
   digitalWrite(waterValveIn, on);
   digitalWrite(waterPump, on);
 } 

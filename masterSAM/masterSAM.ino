@@ -11,10 +11,11 @@
 //Pins
 const int waterPump = 33, waterValveIn = 50, waterValveOut = 52;       //Water
 const int airValve = 46, airBleeder = 32, airPump = 31, airLever  = 48; //Air
-const int vib = 30, tilt1 = 51, tilt2 = 53, sBut = 3, vBut = 18 ;       //Mech and Button                     
+const int vib = 30, tilt1 = 51, tilt2 = 53;                            //Mechanical                                                                                 
+const int sBut = 3, vBut = 18 ;                   //Comm and Button                     
 //Other
 const int manFlag  = 1, waterFlag = 2, pressFlag = 3, bleedFlag = 4, equibFlag = 5; //LCD Status flags
-const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9, balanFlag = 10;
+const int pValFlag = 6, eValFlag  = 7, usbFlag   = 8, noDatFlag = 9;
 const int len = 5;                //running average array length
 const int on = LOW, off = HIGH;   //for inverted relays
 //----------------GLOBAL VARS----------------------------
@@ -22,12 +23,16 @@ Adafruit_ADS1115 ads;
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27,20,4);
 bool start = false;                       //track whether main test has started
 bool vibrating = false;                   //track whether vibrate button is pressed
-float targ, volts;                //target psi, calibration offset, and adc volts respectively
-float pVal[5], eVal[5], samVal, airVol; //Overall output Data
+float targ, calib, volts;                //target psi, calibration offset, and adc volts respectively
+float pVals[5], eVals[5], samVal, airVol; //Overall output Data
 float psi[len], psi_avg;                  //running average array and average
 int i, j, tail = 0;                       //loop indexes and running average index
+<<<<<<< HEAD
 //File myFile;                              //file is created and can be written to
 String line[3];
+=======
+File myFile;                              //file is created and can be written to
+>>>>>>> parent of 878adb7 (depressurizing and lcd improvement)
 void lcdPrint(int state,int dataState = noDatFlag);
 
 void setup() 
@@ -39,13 +44,17 @@ void setup()
 }
 
 void start_test(){start = true;} //ISR for buttons
-void start_vib() {vibrating = true;}
+void start_vib() {}//vibrating = true;}
 
 void loop() 
 {
   if(start)
   { 
+<<<<<<< HEAD
     lcdTest();//mainSAM(); 
+=======
+    waterTest(); 
+>>>>>>> parent of 878adb7 (depressurizing and lcd improvement)
     start = false;
   }
   if(vibrating)
@@ -57,16 +66,99 @@ void loop()
   }
 } 
 
+void testing()
+{
+    lcdPrint(pressFlag);
+    j=1;
+    targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
+    calib = (j==0) ? 1 : ((j==1) ? 1 : 1);   //and calibration offset
+    airPressurize(); 
+    while (psi_avg < targ + calib) 
+    {
+       sPrint("Pressurizing: ");
+       airAverage(); delay(100); 
+    }
+    airHalt();
+    delayAndUpdate(100, 4000); //give time for psi to settle, update average
 
+//---------------------AIR BLEED---------------------------
+    lcdPrint(bleedFlag);
+    airBleed();
+    delayAndUpdate(200, 5000);
+    pVals[(3*i)+j] = psi_avg; //record pre-punch psi
+    sPrint("Pre-Punch Val: ");
+}
+
+void waterTest()
+{
+  waterFill(1);
+  digitalWrite(tilt1, on);
+  digitalWrite(tilt2, off);  
+  delay(2000); 
+  digitalWrite(tilt1, off); 
+  for (int n = 0; n<18; n++)
+  {
+    digitalWrite(tilt1, on);
+    digitalWrite(tilt2, off);  
+    delay(500); 
+    digitalWrite(tilt1, off); 
+    Serial.println(n);
+    delay(5000);
+  }
+  vibrating = false;
+  //return to start position
+  digitalWrite(tilt1, off);
+  digitalWrite(tilt2, on);  
+  delay(11000); 
+  digitalWrite(tilt2, off); 
+  waterClose();
+  delay(2000);
+  lcdPrint(pressFlag);
+  j=0;
+  targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
+  calib = (j==0) ? 1 : ((j==1) ? 1 : 1);   //and calibration offset
+  airPressurize(); 
+  while (psi_avg < targ + calib) 
+  {
+     airAverage(); delay(100); 
+     sPrint("Pressurizing: ");
+  }
+  airHalt();
+  delayAndUpdate(100, 4000); //give time for psi to settle, update average
+
+//---------------------AIR BLEED---------------------------
+  lcdPrint(bleedFlag);
+  airBleed();
+  delayAndUpdate(200, 5000);
+  pVals[(3*i)+j] = psi_avg; //record pre-punch psi
+  sPrint("Pre-Punch Val: ");
+  
+//----------------AIR PUNCH AND VIBRATE-----------------------
+  //lcdPrint(equibFlag, pValFlag); //display pre punch psi
+  airEqualize(on);
+  for(int k=0;k<3;k++){
+    vibrate(on);
+    delay(1000);
+    vibrate(off);
+    delay(1000);
+  }
+  
+  delayAndUpdate(100, 3000);
+  eVals[(3*i)+j] = psi_avg; //record equib psi
+  sPrint("Equib Val: ");
+  //lcdPrint(equibFlag, eValFlag); //display equib psi
+  airEqualize(off);
+  delay(3000); //time to see value
+}
 
 void mainSAM(){
 //-----------------FINAL PROCESS-------------------------------
   for(i=0; i<2; i++){
 //-----------------WATER FILL UP-----------------------------
     lcdPrint(waterFlag);
-    waterFill(i); //change to this when not testing. Shouldn't need to depressurize between uses. on second iteration i causes delay to depressurize
+    waterFill(i);//on second iteration i causes delay to depressurize
     tilt(on);
-    delay(8000);
+    delay(10000);
     waterClose();
     tilt(off);
 
@@ -75,27 +167,21 @@ void mainSAM(){
 //-----------------AIR PRESSURIZATION---------------------
       lcdPrint(pressFlag);
       targ = (j==0) ? 14.5 : ((j==1) ? 30 : 45); //set target pressure 
-      int calib =(j==0) ? .5 : ((j==1) ? .7 : 1.2);   //and calibration offset
-
-      do
+      calib = (j==0) ? 1 : ((j==1) ? 1 : 1);   //and calibration offset
+      airPressurize(); 
+      while (psi_avg < targ + calib) 
       {
-        airPressurize(); 
-        while (psi_avg < targ + calib) 
-        {
-           airAverage(); 
-           delay(50); 
-           sPrint("Pressurizing: ");
-           lcdPSI();
-        }
-        airHalt();
-        delayAndUpdate(100, 4000); //give time for psi to settle, update average
-  
-  //---------------------AIR BLEED---------------------------
-        lcdPrint(bleedFlag);
-        airBleed();
-      } while (psi_avg < targ -.05);//don't need to check upperbound as airBleed ensure this
-      
-      pVal[(3*i)+j] = psi_avg; //record pre-punch psi
+         airAverage(); delay(100); 
+         sPrint("Pressurizing: ");
+      }
+      airHalt();
+      delayAndUpdate(100, 4000); //give time for psi to settle, update average
+
+//---------------------AIR BLEED---------------------------
+      lcdPrint(bleedFlag);
+      airBleed();
+      delayAndUpdate(200, 5000);
+      pVals[(3*i)+j] = psi_avg; //record pre-punch psi
       sPrint("Pre-Punch Val: ");
       
 //----------------AIR PUNCH AND VIBRATE-----------------------
@@ -108,24 +194,20 @@ void mainSAM(){
         delay(1000);
       }
       
-      delayAndUpdate(50, 2000);
-      eVal[(3*i)+j] = psi_avg; //record equib psi
+      delayAndUpdate(100, 3000);
+      eVals[(3*i)+j] = psi_avg; //record equib psi
       sPrint("Equib Val: ");
       lcdPrint(equibFlag, eValFlag); //display equib psi
       airEqualize(off);
       delay(3000); //time to see value
     }
   }
+<<<<<<< HEAD
   samVal = (eVal[0]+eVal[1]+eVal[2])-(eVal[3]+eVal[4]+eVal[5]); //calculate SAM num
+=======
+ 
+  samVal = (eVals[0]+eVals[1]+eVals[2])-(eVals[3]+eVals[4]+eVals[5]); //calculate SAM num
+  //lcdPrint(manFlag, manFlag);
+>>>>>>> parent of 878adb7 (depressurizing and lcd improvement)
   //sdWrite(samVal);
-
-  //Depressurize after final test
-  digitalWrite(waterValveOut, on);
-  delay(4000);
-  airEqualize(on);
-  delay(3000);
-  airEqualize(off);
-  
-  vibrating = false; //necessary due to vBut interrupt being triggered by tilt relays
-  lcdPrint(manFlag, manFlag);
 }
