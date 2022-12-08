@@ -7,7 +7,9 @@
 
 This repo has many folders. For the critical files and folders there will be additional READMEs. Those will be the most important to read. Here's a short explanation of the folders and files present.
 
-*masterSAM - The most important folder. This holds the fully functional automated program. Th
+ * masterSAM - The most important folder. This holds the fully functional automated program. Th
+ * dfgds
+ * sdfg
 
 ## Running The Code
 
