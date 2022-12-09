@@ -44,7 +44,7 @@ void loop()
 {
   if(start)
   { 
-    mainSAM(); 
+    //mainSAM(); 
     start = false;
   }
   if(vibrating)
@@ -118,7 +118,7 @@ void mainSAM(){
     }
   }
   //calculate vals
-  samVal = (eVal[0]+eVal[1]+eVal[2])-(eVal[3]+eVal[4]+eVal[5]); //calculate SAM num
+  samVal = eVal[5]-eVal[2]; //calculate SAM num
   airVol = ((376.0*pVal[2])/eVal[2])-376.0; //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal
   Serial.println("airVol: ");
   Serial.println(airVol);

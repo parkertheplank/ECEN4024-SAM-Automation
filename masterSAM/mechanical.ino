@@ -11,7 +11,7 @@ void mechSetup()
 
 void tilt(int state)
 {
-  digitalWrite(tilt1, state);
+  digitalWrite(tilt1, state); //must be invvers or fuse will blow
   digitalWrite(tilt2, !state);  
   delay(9500); //Time derived by ten trial bubble tilt testing
   digitalWrite(tilt1, off);

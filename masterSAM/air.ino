@@ -65,7 +65,7 @@ void airBleed()
   bool done = false;
   float calib =(j==0) ? .03 : ((j==1) ? .03 : .04); //need wider tolerance for 45 psi
   
-  digitalWrite(airBleeder,off); //bleed air
+  digitalWrite(airBleeder,off); //bleed air, remember bleeder inverted compared to other periphials
   while (!done){
     airAverage();
     
@@ -101,6 +101,7 @@ void airHalt()
 {
   digitalWrite(airValve, off); //close valve
   digitalWrite(airPump, off); //stop pump
+  //dsgsd
 } 
 
 void airEqualize(int state) {digitalWrite(airLever,state);} 
