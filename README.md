@@ -12,9 +12,3 @@ This repo has many folders. For the critical files and folders there will be add
  * SAM-MATLAB-Transducer-Calibration - Code we used to make lines of best fit to match the SAM gauge psi readings
  * SAM-Previous teams LCD - LCD code from team previous to Fall2022
  * SAM-Unit Test an assortment of unit tests we used before transitioning to our main file. 
-
-## Running The Code
-
-## Editing the Code
-
-## Outstanding Issues/Bugs
