@@ -32,3 +32,4 @@ Bugs
 Issues
 * Data storage functions and variables are present but not fully implemented
 * Several of the test functions require more changes to the program than simply swapping them for mainSAM() or are incomplete
+* Issues could occur if proram is stopped (power switch turned off) midway through program. Some way of handling this case and running a reset funciton is needed.
