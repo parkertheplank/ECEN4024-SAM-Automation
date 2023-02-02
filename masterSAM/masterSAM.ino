@@ -119,7 +119,7 @@ void mainSAM(){
   }
   //calculate vals
   samVal = eVal[5]-eVal[2]; //calculate SAM num
-  airVol = ((376.0*pVal[2])/eVal[2])-376.0; //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal
+  airVol = ((100*376)/7140)*((((14.5/14.69595)+1)/((eVal[0]/14.69595)+1))-1)*(1+(14.69595/eVal[0])); //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal (Corrected)
   Serial.println("airVol: ");
   Serial.println(airVol);
   Serial.println("samVal");
