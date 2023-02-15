@@ -24,6 +24,7 @@ bool vibrating = false;                   //track whether vibrate button is pres
 float targ, volts;                //target psi, calibration offset, and adc volts respectively
 float pVal[6], eVal[6], samVal, airVol; //Overall output Data
 float psi[len], psi_avg;                  //running average array and average
+float pCorr;                              //pressure correction value
 int i, j, tail = 0;                       //loop indexes and running average index
 File myFile;                              //file is created and can be written to
 String line[3];
@@ -119,7 +120,8 @@ void mainSAM(){
   }
   //calculate vals
   samVal = eVal[5]-eVal[2]; //calculate SAM num
-  airVol = ((100*376)/7140)*((((14.5/14.69595)+1)/((eVal[0]/14.69595)+1))-1)*(1+(14.69595/eVal[0])); //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal (Corrected)
+  pCorr = 7.60; //default calibration value
+  airVol = ((100*376)/7140)*((((14.5/14.69595)+1)/(((eVal[0]+pCorr)/14.69595)+1))-1)*(1+(14.69595/(eVal[0]+pCorr))); //Vc=376 “volume of top chamber in mL” P1V1=P2V2 P1=Vc+airVol V1=eVal (Corrected)
   Serial.println("airVol: ");
   Serial.println(airVol);
   Serial.println("samVal");
